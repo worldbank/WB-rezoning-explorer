@@ -10,6 +10,7 @@ import FormContext from '../../context/form-context';
 import ModalSelect from './modal-select';
 import { ModalHeadline } from '@devseed-ui/modal';
 import ModalSelectArea from './modal-select-area';
+import ModalSelectZoneType from './modal-select-zone-type';
 
 import Button from '../../styles/button/button';
 import InfoButton from '../common/info-button';
@@ -23,11 +24,7 @@ import Heading, { Subheading } from '../../styles/type/heading';
 import { PanelBlock, PanelBlockBody, PanelBlockHeader } from '../common/panel-block';
 import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import Prose from '../../styles/type/prose';
-import GridSetter from './grid-setter';
-import { INPUT_CONSTANTS } from './panel-data';
 import { themeVal } from '../../styles/utils/general';
-
-const { GRID_OPTIONS } = INPUT_CONSTANTS;
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
@@ -83,18 +80,23 @@ function ExpMapPrimePanel (props) {
     selectedResource,
     selectedArea,
     setSelectedResource,
+
+    availableZoneTypes,
+    selectedZoneType,
+    setSelectedZoneType,
+
     tourStep,
     setTourStep,
-    gridMode,
-    setGridMode,
-    gridSize, setGridSize,
     updateFilteredLayer
   } = useContext(ExploreContext);
+
   const {
     showSelectAreaModal,
     setShowSelectAreaModal,
     showSelectResourceModal,
     setShowSelectResourceModal,
+    showSelectZoneTypeModal,
+    setShowSelectZoneTypeModal,
     setZonesGenerated,
     setInputTouched,
     filtersLists,
@@ -102,13 +104,29 @@ function ExpMapPrimePanel (props) {
     lcoeList,
     filterRanges
   } = useContext(FormContext);
-
+  
   const {
     map,
     mapLayers, setMapLayers
   } = useContext(MapContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
+
+  const onAreaEdit= () => {
+    setShowSelectAreaModal(true);
+    setShowSelectResourceModal(false);
+    setShowSelectZoneTypeModal(false);
+  };
+  const onResourceEdit = () => {
+    setShowSelectAreaModal(false);
+    setShowSelectResourceModal(true);
+    setShowSelectZoneTypeModal(false);
+  };
+  const onZoneTypeEdit = () => {
+    setShowSelectAreaModal(false);
+    setShowSelectResourceModal(false);
+    setShowSelectZoneTypeModal(true);
+  };
 
   return (
     <>
@@ -231,12 +249,10 @@ function ExpMapPrimePanel (props) {
               updateFilteredLayer={updateFilteredLayer}
               weightsList={weightsList}
               lcoeList={lcoeList}
-              gridMode={gridMode}
-              setGridMode={setGridMode}
-              gridSize={gridSize}
-              setGridSize={setGridSize}
-              onAreaEdit={() => setShowSelectAreaModal(true)}
-              onResourceEdit={() => setShowSelectResourceModal(true)}
+              selectedZoneType={selectedZoneType}
+              onAreaEdit={onAreaEdit}
+              onResourceEdit={onResourceEdit}
+              onZoneTypeEdit={onZoneTypeEdit}
               onInputTouched={(status) => {
                 setInputTouched(true);
               }}
@@ -254,7 +270,7 @@ function ExpMapPrimePanel (props) {
                     </Heading>
                     <EditButton
                       id='select-area-button'
-                      onClick={() => setShowSelectAreaModal(true)}
+                      onClick={onAreaEdit}
                       title='Edit Area'
                     >
                       Edit Area Selection
@@ -272,7 +288,7 @@ function ExpMapPrimePanel (props) {
                     </Subheading>
                     <EditButton
                       id='select-resource-button'
-                      onClick={() => setShowSelectResourceModal(true)}
+                      onClick={onResourceEdit}
                       title='Edit Resource'
                     >
                       Edit Resource Selection
@@ -285,23 +301,21 @@ function ExpMapPrimePanel (props) {
                     <Subheading>Zone Type and Size: </Subheading>
                     <Subheading variation='primary'>
                       <Subheadingstrong>
-                        {gridMode ? `${gridSize} km²` : 'Boundaries'}
+                        { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : "Select Zone Type And Size"}
                       </Subheadingstrong>
                     </Subheading>
-
-                    <GridSetter
-                      gridOptions={GRID_OPTIONS}
-                      gridSize={gridSize}
-                      setGridSize={setGridSize}
-                      gridMode={gridMode}
-                      setGridMode={setGridMode}
-                      disableBoundaries={selectedResource === 'Off-Shore Wind'}
-                    />
+                    <EditButton
+                      id='select-zone-type-button'
+                      onClick={onZoneTypeEdit}
+                      title='Edit Zone Type'
+                    >
+                      Edit Zone Type Selection
+                    </EditButton>
                   </HeadOptionHeadline>
                 </HeadOption>
               </PanelBlockHeader>
               <PanelBlockBody>
-                {filterRanges && selectedArea && selectedResource ? (
+                {filterRanges && selectedArea && selectedResource && selectedZoneType ? (
                   <PreAnalysisMessage> Loading parameters... </PreAnalysisMessage>
                 ) : (
                   <PreAnalysisMessage>
@@ -314,14 +328,22 @@ function ExpMapPrimePanel (props) {
           )
         }
       />
+
+      <ModalSelectArea
+        revealed={showSelectAreaModal}
+        areas={areas}
+        closeButton={typeof selectedArea !== 'undefined'}
+        selectedResource={selectedResource}
+        showSelectAreaModal={showSelectAreaModal}
+        showSelectZoneTypeModal={showSelectZoneTypeModal}
+        setShowSelectAreaModal={setShowSelectAreaModal}
+        setSelectedAreaId={setSelectedAreaId}
+      />
+
       <ModalSelect
-        revealed={showSelectResourceModal && !showSelectAreaModal}
-        onOverlayClick={() => {
-          setShowSelectResourceModal(false);
-        }}
-        onCloseClick={() => {
-          setShowSelectResourceModal(false);
-        }}
+        revealed={ !showSelectAreaModal && showSelectResourceModal  }
+        onOverlayClick={() => setShowSelectResourceModal(false)}
+        onCloseClick={() => setShowSelectResourceModal(false)}
         data={availableResources}
         closeButton={typeof selectedResource !== 'undefined'}
         renderHeadline={() => (
@@ -350,13 +372,12 @@ function ExpMapPrimePanel (props) {
         nonScrolling
       />
 
-      <ModalSelectArea
-        areas={areas}
-        closeButton={typeof selectedArea !== 'undefined'}
-        selectedResource={selectedResource}
-        showSelectAreaModal={showSelectAreaModal}
-        setShowSelectAreaModal={setShowSelectAreaModal}
-        setSelectedAreaId={setSelectedAreaId}
+      <ModalSelectZoneType
+        revealed={!showSelectAreaModal && !showSelectResourceModal && showSelectZoneTypeModal}
+        availableZoneTypes={availableZoneTypes}
+        selectedZoneType={selectedZoneType}
+        setSelectedZoneType={setSelectedZoneType}
+        setShowSelectZoneTypeModal={setShowSelectZoneTypeModal}
       />
     </>
   );

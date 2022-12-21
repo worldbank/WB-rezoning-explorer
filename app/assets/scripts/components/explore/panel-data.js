@@ -82,3 +82,26 @@ allowedTypes.set('boolean', BOOL);
 allowedTypes.set('categorical_filter', MULTI);
 
 export const presets = {};
+
+export const BOUNDARIES = 'Boundaries';
+export const GRID = 'Grid'
+
+// TODO: Expand GRID_OPTIONS programmatically
+export const zoneTypesList = [
+  {
+    name: BOUNDARIES,
+    type: BOUNDARIES,
+    size: 0,
+  },
+  {
+    name: `${GRID}-${GRID_OPTIONS[0]}`,
+    type: GRID,
+    size: GRID_OPTIONS[0],
+  },
+  {
+    name: `${GRID}-${GRID_OPTIONS[1]}`,
+    type: GRID,
+    size: GRID_OPTIONS[1],
+  }
+];
+
