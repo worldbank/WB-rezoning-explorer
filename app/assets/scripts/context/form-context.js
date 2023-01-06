@@ -13,7 +13,7 @@ import { apiResourceNameMap } from '../components/explore/panel-data';
 
 const FormContext = createContext({});
 export function FormProvider (props) {
-  const { selectedAreaId, selectedResource, currentZones } = useContext(ExploreContext);
+  const { selectedAreaId, selectedResource, selectedZoneType, currentZones } = useContext(ExploreContext);
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
 
@@ -22,6 +22,9 @@ export function FormProvider (props) {
   );
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !selectedResource
+  );
+  const [showSelectZoneTypeModal, setShowSelectZoneTypeModal] = useState(
+    !selectedZoneType
   );
 
   const [filtersList, dispatchFiltersList] = useReducer(
@@ -50,8 +53,9 @@ export function FormProvider (props) {
   useEffect(() => {
     setShowSelectAreaModal(!selectedAreaId);
     setShowSelectResourceModal(!selectedResource);
+    setShowSelectZoneTypeModal(!selectedZoneType);
 
-    if (selectedResource) {
+    if (selectedAreaId && selectedResource && selectedZoneType) {
       // only fetch filters once, after we have resources
       if (!ff) {
         fetchFilters(dispatchFiltersList);
@@ -60,7 +64,7 @@ export function FormProvider (props) {
 
       fetchFilterRanges(selectedAreaId, selectedResource, dispatchFilterRanges);
     }
-  }, [selectedAreaId, selectedResource]);
+  }, [selectedAreaId, selectedResource, selectedZoneType]);
 
   useEffect(() => {
     fetchWeights(dispatchWeightsList);
@@ -93,9 +97,8 @@ export function FormProvider (props) {
             setZonesGenerated,
             showSelectAreaModal,
             setShowSelectAreaModal,
-            showSelectResourceModal,
-            setShowSelectResourceModal
-
+            showSelectResourceModal, setShowSelectResourceModal,
+            showSelectZoneTypeModal, setShowSelectZoneTypeModal,
           }
         }
       >

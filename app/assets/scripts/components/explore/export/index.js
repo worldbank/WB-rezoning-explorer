@@ -125,7 +125,7 @@ function getFilterValues(
  * The component
  */
 const ExportZonesButton = (props) => {
-  const { selectedResource, selectedArea, currentZones, gridMode, gridSize, maxZoneScore, maxLCOE } = useContext(
+  const { selectedResource, selectedArea, currentZones, selectedZoneType, maxZoneScore, maxLCOE } = useContext(
     ExploreContext
   );
 
@@ -180,8 +180,7 @@ const ExportZonesButton = (props) => {
     const data = {
       selectedResource,
       selectedArea,
-      gridMode,
-      gridSize,
+      selectedZoneType,
       zones: currentZones.getData().filter(z => {
         // Filter by zone min/max lcoe/score
         /* eslint-disable camelcase */
@@ -215,7 +214,7 @@ const ExportZonesButton = (props) => {
         `${apiEndpoint}/export/${operation}/${selectedArea.id}/${apiResourceNameMap[selectedResource]}`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-type": "application/json" },
           body: JSON.stringify({
             lcoe: getLcoeValues(props.location, selectedResource, lcoeList),
             weights: getWeightValues(
@@ -289,7 +288,7 @@ const ExportZonesButton = (props) => {
           <DropMenuItem
             data-dropdown='click.close'
             useIcon='picture'
-            onClick={() => exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap)}
+            onClick={() => exportCountryMap(selectedArea, selectedResource, selectedZoneType, map, setMap)}
           >
             Map (.pdf)
           </DropMenuItem>

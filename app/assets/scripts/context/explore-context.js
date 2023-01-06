@@ -22,6 +22,7 @@ import {
   checkIncluded,
   getMultiplierByUnit,
   resourceList,
+  zoneTypesList,
   apiResourceNameMap
 } from '../components/explore/panel-data';
 
@@ -125,6 +126,14 @@ export function ExploreProvider (props) {
     validator: (v) => availableResources.map((r) => r.name).includes(v)
   });
 
+  // Zone type context
+  const [availableZoneTypes, setAvailableZoneTypes] = useState(zoneTypesList);
+  const [selectedZoneType, setSelectedZoneType] = useQsState({
+    key: 'zoneId',
+    default: undefined,
+    validator: (v) => availableZoneTypes.map((r) => r.name).includes(v?.name)
+  });
+
   // Helper function to update resource list for the selected area.
   // Instead of using "selectedArea" from state, the area must be passed as a param
   // to avoid life cycle errors.
@@ -154,9 +163,6 @@ export function ExploreProvider (props) {
       updatedList
     );
   }
-
-  const [gridMode, setGridMode] = useState(false);
-  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
   const [tourStep, setTourStep] = useState(0);
 
@@ -253,7 +259,7 @@ export function ExploreProvider (props) {
         ...nextArea,
         bounds: newBounds
       };
-      setGridMode(true);
+      setSelectedZoneType( zoneTypesList[1] );
     }
 
     setSelectedArea(nextArea);
@@ -267,9 +273,9 @@ export function ExploreProvider (props) {
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoadingMessage(`Generating zones for ${selectedArea.name}, this may take a few minutes...`);
     fetchZones(
-      gridMode && gridSize,
       selectedArea,
       selectedResource,
+      selectedZoneType,
       filterString,
       weights,
       lcoe,
@@ -389,14 +395,14 @@ export function ExploreProvider (props) {
           selectedArea,
           selectedAreaId,
           setSelectedAreaId,
+
           availableResources,
           selectedResource,
           setSelectedResource,
 
-          gridMode,
-          setGridMode,
-          gridSize,
-          setGridSize,
+          availableZoneTypes,
+          selectedZoneType,
+          setSelectedZoneType,
 
           currentZones,
           generateZones,

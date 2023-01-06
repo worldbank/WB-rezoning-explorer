@@ -34,8 +34,8 @@ const HeadlineTabs = styled.div`
 
 function ModalSelectArea (props) {
   const {
+    revealed,
     areas,
-    showSelectAreaModal,
     setShowSelectAreaModal,
     setSelectedAreaId,
     closeButton
@@ -46,10 +46,8 @@ function ModalSelectArea (props) {
 
   return (
     <ModalSelect
-      revealed={showSelectAreaModal}
-      onOverlayClick={() => {
-        setShowSelectAreaModal(false);
-      }}
+      revealed={revealed}
+      onOverlayClick={() => setShowSelectAreaModal(false)}
       onCloseClick={() => setShowSelectAreaModal(false)}
       closeButton={closeButton}
       data={areas.filter((a) => a.type === areaType)}
@@ -99,7 +97,6 @@ function ModalSelectArea (props) {
 
 ModalSelectArea.propTypes = {
   areas: T.array,
-  showSelectAreaModal: T.bool,
   setShowSelectAreaModal: T.func,
   setSelectedAreaId: T.func,
   closeButton: T.bool

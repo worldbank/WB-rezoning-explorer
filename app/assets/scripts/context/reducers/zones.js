@@ -8,7 +8,7 @@ import theme from '../../styles/theme/theme';
 import squareGrid from '@turf/square-grid';
 import pLimit from 'p-limit';
 import { wrapLogReducer } from './../contexeed';
-import { apiResourceNameMap } from '../../components/explore/panel-data';
+import { apiResourceNameMap, GRID } from '../../components/explore/panel-data';
 import { updateLoadingProgress } from '../../components/common/global-loading';
 
 const limit = pLimit(20);
@@ -23,7 +23,7 @@ async function getZoneSummary (feature, filterString, weights, lcoe, countryReso
     summary = (
       await fetchJSON(`${apiEndpoint}/zone${countryResourcePath}?${filterString}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-type": "application/json" },
         body: JSON.stringify({
           aoi: feature.geometry,
           weights,
@@ -58,9 +58,9 @@ export const fetchZonesReducer = wrapLogReducer(makeAPIReducer('FETCH_ZONES'));
  * dispatch updates to some context using 'dispatch' function
  */
 export async function fetchZones (
-  grid,
   selectedArea,
   selectedResource,
+  selectedZoneType,
   filterString,
   weights,
   lcoe,
@@ -74,7 +74,7 @@ export async function fetchZones (
 
     if (selectedResource === 'Off-Shore Wind') {
       // if offshore wind, we are already in grid and bounds are eez bounds
-      features = squareGrid(selectedArea.bounds, grid, {
+      features = squareGrid(selectedArea.bounds, selectedZoneType.size, {
         units: 'kilometers',
         mask: {
           type: 'FeatureCollection',
@@ -88,13 +88,13 @@ export async function fetchZones (
       );
 
       // Get sub areas from Topojson
-      if (grid) {
+      if (selectedZoneType.type == GRID) {
         const areaLimits = topojson.merge(
           zonesTopoJSON,
           zonesTopoJSON.objects[areaId].geometries
         );
 
-        const areaGrid = squareGrid(selectedArea.bounds, grid, {
+        const areaGrid = squareGrid(selectedArea.bounds, selectedZoneType.size, {
           mask: areaLimits,
           units: 'kilometers'
         });
