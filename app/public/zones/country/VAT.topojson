@@ -1,0 +1,1 @@
+{"type":"Topology","bbox":[12.455550193786678,41.90755081176758,12.455550193786678,41.90755081176758],"transform":{"scale":[1,1],"translate":[12.455550193786678,41.90755081176758]},"objects":{"VAT":{"type":"GeometryCollection","geometries":[{"type":"Polygon","arcs":[[0]],"properties":{"id":"VAT","name":"Vatican City"}}]}},"arcs":[[[0,0],[0,0]]]}
