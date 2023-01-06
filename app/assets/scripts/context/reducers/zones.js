@@ -130,7 +130,7 @@ export async function fetchZones (
     }
 
     // If area of country type, prepare country & resource path string to add to URL
-    const countryResourcePath = selectedArea.type === 'country' ? `/${selectedArea.id}/${apiResourceNameMap[selectedResource]}` : '';
+    const countryResourcePath = `/${selectedArea.id}/${apiResourceNameMap[selectedResource]}`;
 
     // Fetch Lcoe for each sub-area
     const zoneUpdateInterval = setInterval(() => {

@@ -325,10 +325,10 @@ export function ExploreProvider (props) {
       .join('&');
 
     // If area of country type, prepare country path string to add to URL
-    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}/` : '';
+    const countryPath = `${selectedArea.id}/`;
 
     // if area of country type, prepare resource path string to add to URL
-    const resourcePath = selectedArea.type === 'country' ? `${apiResourceNameMap[selectedResource]}/` : '';
+    const resourcePath = `${apiResourceNameMap[selectedResource]}/`;
 
     // Off-shore mask flag
     const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
