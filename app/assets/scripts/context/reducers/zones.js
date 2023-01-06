@@ -151,11 +151,13 @@ export async function fetchZones (
       ...zones.map((z) => get(z, 'properties.summary.zone_score', 0))
     );
 
-    const data = zones.map((z) => {
+    zones.sort( ( z1, z2 ) => get(z1, 'properties.summary.zone_score', 0.5) - get(z2, 'properties.summary.zone_score', 0.5) );
+
+    const data = zones.map((z, index) => {
       if (!get(z, 'properties.summary.zone_score')) return z;
 
       const zoneScore = z.properties.summary.zone_score / maxScore;
-      const color = zoneScoreColor(zoneScore);
+      const color = zoneScoreColor(index, 0, zones.length - 1);
       return {
         ...z,
         properties: {

@@ -300,7 +300,7 @@ FilteredAreaLegendItem.propTypes = {
   mapLayers: T.array
 };
 
-function ZoneScoreLegendItem({ mapLayers, wide }) {
+function ZoneScoreLegendItem({ mapLayers, wide, minLabel, maxLabel }) {
   const zoneScoreVisible = mapLayers.filter(
     (layer) =>
       layer.id === ZONES_BOUNDARIES_LAYER_ID &&
@@ -330,15 +330,17 @@ function ZoneScoreLegendItem({ mapLayers, wide }) {
           </LegendLabelsStyled>
         )}
       </LegendLinear>
-      <InputLabel>0</InputLabel>
-      <InputLabel align='right'>1</InputLabel>
+      <InputLabel>{minLabel}</InputLabel>
+      <InputLabel align='right'>{maxLabel}</InputLabel>
     </LegendItemWrapper>
   );
 }
 
 ZoneScoreLegendItem.propTypes = {
   mapLayers: T.array,
-  wide: T.bool
+  wide: T.bool,
+  minLabel: T.oneOfType([T.number, T.string]),
+  maxLabel: T.oneOfType([T.number, T.string]),
 };
 
 export default function MapLegend({
@@ -353,6 +355,15 @@ export default function MapLegend({
   const landCoverVisible =
     mapLayers.filter(({ id, visible }) => id === 'land-cover' && visible)
       .length > 0;
+  let minZoneScore = 0, maxZoneScore = 1;
+  if ( Array.isArray( currentZones?.data ) )
+  {
+    minZoneScore = Math.min( ...currentZones.data.map( z => get(z, 'properties.summary.zone_score', 1.0) ) );
+    maxZoneScore = Math.max( ...currentZones.data.map( z => get(z, 'properties.summary.zone_score', 0.0) ) );
+    minZoneScore = Math.floor( minZoneScore * 1000.0 ) / 1000.0;
+    maxZoneScore = Math.ceil( maxZoneScore * 1000.0 ) / 1000.0;
+  }
+    
   return (
     <MapLegendSelf wide={landCoverVisible} id='map-legend' isExpanded={showMapLegend}>
       <LegendFoldTrigger
@@ -400,7 +411,7 @@ export default function MapLegend({
         filtersLists={filtersLists}
         currentZones={currentZones}
       />
-      <ZoneScoreLegendItem mapLayers={mapLayers} wide={landCoverVisible} />
+      <ZoneScoreLegendItem mapLayers={mapLayers} wide={landCoverVisible} minLabel={minZoneScore} maxLabel={maxZoneScore} />
     </MapLegendSelf>
   );
 }

@@ -28,7 +28,7 @@ const Wrapper = styled.div`
   padding: 0.5rem 0;
 `;
 
-function ColorScale ({ min, max, steps, heading, colorFunction }) {
+function ColorScale ({ minLabel, maxLabel, steps, heading, colorFunction }) {
   return (
     <Wrapper>
       <Subheading size='small'>{heading}</Subheading>
@@ -48,16 +48,16 @@ function ColorScale ({ min, max, steps, heading, colorFunction }) {
         }
       </Scale>
       <Labels>
-        <Subheading>{min}</Subheading>
-        <Subheading>{max}</Subheading>
+        <Subheading>{minLabel}</Subheading>
+        <Subheading>{maxLabel}</Subheading>
       </Labels>
     </Wrapper>
   );
 }
 
 ColorScale.propTypes = {
-  min: T.oneOfType([T.number, T.string]),
-  max: T.oneOfType([T.number, T.string]),
+  minLabel: T.oneOfType([T.number, T.string]),
+  maxLabel: T.oneOfType([T.number, T.string]),
   steps: T.number,
   heading: T.string,
   colorFunction: T.func
