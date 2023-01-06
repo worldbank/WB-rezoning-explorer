@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
 import T from 'prop-types';
+import styled from 'styled-components';
+import Button from '../../../styles/button/button';
 
 import {
   FormWrapper,
@@ -14,13 +16,50 @@ import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../compone
 import Heading from '../../../styles/type/heading';
 import { makeTitleCase } from '../../../styles/utils/general';
 
-import InfoButton from '../../common/info-button';
 import { FormSwitch } from '../../../styles/form/switch';
 import { INPUT_CONSTANTS } from '../panel-data';
 
 import FormInput from './form-input';
+import Dropdown from '../../common/dropdown';
 
 const { BOOL } = INPUT_CONSTANTS;
+
+const DropdownWide = styled(Dropdown)`
+max-width: max-content;
+`;
+
+/* Filters info table
+ * @param filter_data is an array of shape
+ *  [
+ *    {label: String, info: String},
+ *    ...
+ *  ]
+ */
+function FilterInfoTable (props) {
+  const { filter_data } = props;
+  return (
+    <table style={{"border": "1px solid", "margin": "auto"}}>
+      <tbody>
+          <tr key={filter_data.filter_title+"-label"}>
+            <td style={{"padding": "5px", "border": "1px solid"}}>Filter title</td>
+            <td style={{"padding": "5px", "border": "1px solid"}}>{filter_data.filter_title}</td>
+          </tr>
+          <tr key={filter_data.filter_title+"-description"}>
+            <td style={{"padding": "5px", "border": "1px solid"}}>Filter description</td>
+            <td style={{"padding": "5px", "border": "1px solid"}}>{filter_data.filter_description}</td>
+          </tr>
+          <tr key={filter_data.filter_title+"-source_url"}>
+            <td style={{"padding": "5px", "border": "1px solid"}}>Data source</td>
+            <td style={{"padding": "5px", "border": "1px solid"}}><a href={filter_data.filter_source} target="_blank"> {filter_data.filter_source} </a></td>
+          </tr>
+      </tbody>
+    </table>
+  );
+}
+
+FilterInfoTable.propTypes = {
+  filter_data: T.array,
+};
 
 /* Filters form
  * @param outputFilters is an array of shape
@@ -146,12 +185,25 @@ function FiltersForm (props) {
                                     )}
                                   </PanelOptionTitle>
                                   {filter.info && (
-                                    <InfoButton
-                                      info={filter.info}
-                                      id={filter.name}
-                                    >
-                                      Info
-                                    </InfoButton>
+                                    <DropdownWide
+                                      alignment='center'
+                                      direction='down'
+                                      triggerElement={
+                                        <Button
+                                          hideText
+                                          useIcon='circle-information'
+                                          className='info-button'
+                                          title={filter.info}
+                                        >
+                                          Info
+                                        </Button>
+                                      }>
+                                      <FilterInfoTable filter_data={{
+                                        filter_title: filter.title, 
+                                        filter_description: filter.description,
+                                        filter_source: filter.source_url, 
+                                      }}/>
+                                    </DropdownWide>
                                   )}
 
                                   {filter.input.type === BOOL && (
