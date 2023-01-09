@@ -133,9 +133,14 @@ export function ExploreProvider (props) {
       // Wait for eez to be loaded before checking to see that selected resource is acceptable for this country
       return;
     }
+    console.log( "Area", area );
+    console.log( "resourceList" );
     const updatedList = resourceList.filter((r) => {
       // If no area is selected, return all resources
       if (!area) return true;
+
+      if ( !area.available_resources.includes( r.name ) )
+        return false;
 
       // If resource is not offshore, include it
       if (r.name !== RESOURCES.OFFSHORE) return true;
@@ -150,6 +155,7 @@ export function ExploreProvider (props) {
       // default to wind
       setSelectedResource(undefined);
     }
+
     setAvailableResources(
       updatedList
     );
