@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
 import T from 'prop-types';
+import styled from 'styled-components';
+import Button from '../../../styles/button/button';
 
 import {
   FormWrapper,
@@ -14,13 +16,19 @@ import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../compone
 import Heading from '../../../styles/type/heading';
 import { makeTitleCase } from '../../../styles/utils/general';
 
-import InfoButton from '../../common/info-button';
 import { FormSwitch } from '../../../styles/form/switch';
 import { INPUT_CONSTANTS } from '../panel-data';
 
 import FormInput from './form-input';
+import Dropdown from '../../common/dropdown';
 
 const { BOOL } = INPUT_CONSTANTS;
+
+const DropdownWide = styled(Dropdown)`
+max-width: max-content;
+background: rgba(0,0,0,0.8);
+color: white;
+`;
 
 /* Filters form
  * @param outputFilters is an array of shape
@@ -146,12 +154,26 @@ function FiltersForm (props) {
                                     )}
                                   </PanelOptionTitle>
                                   {filter.info && (
-                                    <InfoButton
-                                      info={filter.info}
-                                      id={filter.name}
-                                    >
-                                      Info
-                                    </InfoButton>
+                                    <DropdownWide
+                                      alignment='center'
+                                      direction='down'
+                                      triggerElement={
+                                        <Button
+                                          hideText
+                                          useIcon='circle-information'
+                                          className='info-button'
+                                          title={filter.info}
+                                        >
+                                          Info
+                                        </Button>
+                                      }>
+                                      <div>
+                                        Usage: &nbsp;
+                                        {filter.description}<br/>
+                                        Data Source: &nbsp;
+                                        <a href={filter.source_url} target="_blank"> {filter.source_url} </a>
+                                      </div>
+                                    </DropdownWide>
                                   )}
 
                                   {filter.input.type === BOOL && (
