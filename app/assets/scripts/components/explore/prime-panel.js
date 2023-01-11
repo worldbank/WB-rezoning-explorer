@@ -176,9 +176,19 @@ function ExpMapPrimePanel (props) {
               }}
               onVisibilityToggle={(layer, visible) => {
                 if (visible) {
+                  // Show layer 
                   if (layer.type === 'raster' && !layer.nonexclusive) {
+                    let visibilityTimeStamps = mapLayers.map( l => (l?.visibilityTimeStamp ? l.visibilityTimeStamp : 0) );
+                    let highestTimeStamp = Math.max( ...visibilityTimeStamps );
+
                     const ml = mapLayers.map((l) => {
                       if (l.type === 'raster' && !l.nonexclusive) {
+                        if ( l.visible && (l.id !== layer.id) )
+                        {
+                          // Add time stamp to indicate this layer was hidden last
+                          l.visibilityTimeStamp = highestTimeStamp + 1;
+                          highestTimeStamp++;
+                        }
                         map.setLayoutProperty(
                           l.id,
                           'visibility',
@@ -202,16 +212,40 @@ function ExpMapPrimePanel (props) {
                     ]);
                   }
                 } else {
+                  // Hide layer
                   map.setLayoutProperty(layer.id, 'visibility', 'none');
                   const ind = mapLayers.findIndex((l) => l.id === layer.id);
-                  setMapLayers([
+                  const ml = [
                     ...mapLayers.slice(0, ind),
                     {
                       ...layer,
                       visible: false
                     },
                     ...mapLayers.slice(ind + 1)
-                  ]);
+                  ];
+                  
+                  // If the layer is an exclusive raster layer, we find the layer that was hidden last and then show it
+                  if (layer.type === 'raster' && !layer.nonexclusive) {
+                    let visibilityTimeStamps = ml.map( l => l?.visibilityTimeStamp ? l.visibilityTimeStamp : 0 );
+                    let highestTimeStamp = Math.max( ...visibilityTimeStamps );
+
+                    while ( highestTimeStamp > 0 )
+                    {
+                      let ind = ml.findIndex((l) => l.visibilityTimeStamp === highestTimeStamp);
+                      if ( ind !== -1 && !ml[ind].visible )
+                      {
+                        ml[ind].visible = true;
+                        ml[ind].visibilityTimeStamp = 0;
+                        map.setLayoutProperty(ml[ind].id, 'visibility', 'visible');
+                        break;
+                      }
+                      else
+                      {
+                        highestTimeStamp--;
+                      }
+                    }
+                  }
+                  setMapLayers( ml );
                 }
               }}
             />
