@@ -37,77 +37,81 @@ const PreAnalysisMessage = styled(Prose)`
   text-align: center;
 `;
 
-function ExpMapSecPanel (props) {
+function ExpMapSecPanel(props) {
   const { onPanelChange } = props;
   const { currentZones } = useContext(ExploreContext);
   const { inputTouched } = useContext(FormContext);
   const [showSubmitIssuePanel, setShowSubmitIssuePanel] = useState(false);
 
   return (
-    <SecPanel
-      collapsible
-      direction='right'
-      onPanelChange={onPanelChange}
-      initialState={isLargeViewport()}
-      bodyContent={
-        <>
-          <PanelBlock>
-            <PanelBlockHeader>
-              <Heading>
-                Zone Analysis
-              </Heading>
-            </PanelBlockHeader>
-            <PanelBlockBody>
-              {currentZones.isReady()
-                ? (
-                  <ZoneAnalysisPanel
-                    currentZones={currentZones.getData()}
-                    inputTouched={inputTouched}
-                  />) : (
-                  <PreAnalysisMessage>{currentZones.fetching ? 'Loading...' : 'Apply parameters (Spatial filters, Weights & LCOE Economic inputs) and click "Generate Zones" to load zone analysis.'}</PreAnalysisMessage>
-                )}
-
-            </PanelBlockBody>
-            <PanelBlockFooter>
-              <div style={{align: "center", display:'grid'}}>
-                <hr /> 
-                { showSubmitIssuePanel ? <Button
-                    id='toggle-feedback-tray'
-                    variation='primary-raised-dark'
-                    type='submit'
-                    width='100%'
-                    style={{align: "center"}}
-                    onClick={() => {
-                      setShowSubmitIssuePanel(!showSubmitIssuePanel);
-                    }}
-                  >
-                    <span>Hide Feedback Form</span>
-                  </Button> : null
-                }
-                <SubmitIssueTray 
-                    show={showSubmitIssuePanel}
-                    className='submit-issue-tray'
-                  />
-                { !showSubmitIssuePanel ? <Button
-                    id='toggle-feedback-tray'
-                    variation='primary-raised-dark'
-                    type='submit'
-                    width='100%'
-                    style={{align: "center"}}
-                    onClick={() => {
-                      setShowSubmitIssuePanel(!showSubmitIssuePanel);
-                    }}
-                  >
-                    <span>Show Feedback Form</span>
-                  </Button>
-                  : null
-                }
-              </div>
-            </PanelBlockFooter>
-          </PanelBlock>
-        </>
-      }
-    />
+    <>    
+        <SecPanel
+          collapsible
+          direction='right'
+          onPanelChange={onPanelChange}
+          initialState={isLargeViewport()}
+          bodyContent={
+            <>
+              <PanelBlock>
+                <PanelBlockHeader>
+                  <Heading>Zone Analysis</Heading>
+                </PanelBlockHeader>
+                <PanelBlockBody>
+                  {currentZones.isReady() ? (
+                    <ZoneAnalysisPanel
+                      currentZones={currentZones.getData()}
+                      inputTouched={inputTouched}
+                    />
+                  ) : (
+                    <PreAnalysisMessage>
+                      {currentZones.fetching
+                        ? 'Loading...'
+                        : 'Apply parameters (Spatial filters, Weights & LCOE Economic inputs) and click "Generate Zones" to load zone analysis.'}
+                    </PreAnalysisMessage>
+                  )}
+                </PanelBlockBody>
+                <PanelBlockFooter>
+                  <div style={{ align: 'center', display: 'grid' }}>
+                    <hr />
+                    {showSubmitIssuePanel ? (
+                      <Button
+                        id='toggle-feedback-tray'
+                        variation='primary-raised-dark'
+                        type='submit'
+                        width='100%'
+                        style={{ align: 'center' }}
+                        onClick={() => {
+                          setShowSubmitIssuePanel(!showSubmitIssuePanel);
+                        }}
+                      >
+                        <span>Hide Feedback Form</span>
+                      </Button>
+                    ) : null}
+                    <SubmitIssueTray
+                      show={showSubmitIssuePanel}
+                      className='submit-issue-tray'
+                    />
+                    {!showSubmitIssuePanel ? (
+                      <Button
+                        id='toggle-feedback-tray'
+                        variation='primary-raised-dark'
+                        type='submit'
+                        width='100%'
+                        style={{ align: 'center' }}
+                        onClick={() => {
+                          setShowSubmitIssuePanel(!showSubmitIssuePanel);
+                        }}
+                      >
+                        <span>Show Feedback Form</span>
+                      </Button>
+                    ) : null}
+                  </div>
+                </PanelBlockFooter>
+              </PanelBlock>
+            </>
+          }
+        />
+    </>
   );
 }
 

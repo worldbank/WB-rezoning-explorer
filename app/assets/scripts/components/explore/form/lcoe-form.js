@@ -26,7 +26,7 @@ color: white;
 `;
 
 function LCOEForm (props) {
-  const { lcoe, active, selectedArea } = props;
+  const { lcoe, active, selectedArea,handleEconomicSortedData } = props;
 
   const categorizedCosts = Object.entries(lcoe.reduce((accum, cost) => {
     const [c] = cost;
@@ -83,7 +83,8 @@ function LCOEForm (props) {
                               }
                             })
 
-                          );
+                            );
+                          handleEconomicSortedData(cost)
                           return (
                             <PanelOption key={cost.name} hidden={!isFoldExpanded}>
                               <OptionHeadline>

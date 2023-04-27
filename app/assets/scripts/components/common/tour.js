@@ -9,6 +9,14 @@ import { themeVal } from '../../styles/utils/general';
 
 const steps = [
   {
+    title: 'Info Box',
+    target: '#info-box',
+    content: 'Cick here to view about page of the Rezoning App.',
+    disableBeacon: true,
+    placement: 'right',
+    spotlightClicks: true
+  },
+  {
     title: 'Apply Spatial Filters',
     target: '#filters-tab',
     content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off.',
@@ -52,6 +60,14 @@ const steps = [
     title: 'Export Tour',
     target: '#export-tour-target',
     content: 'Click here to download 3 CSV files representing the input parameters of the app',
+    disableBeacon: true,
+    placement: 'bottom',
+    spotlightClicks: true
+  },
+  {
+    title: 'Import Tour',
+    target: '#import-tour-target',
+    content: 'Click here to Import CSV files containing the input parameters of the app',
     disableBeacon: true,
     placement: 'bottom',
     spotlightClicks: true

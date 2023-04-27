@@ -77,6 +77,7 @@ function FiltersForm (props) {
     active,
     disabled,
     selectedArea,
+    handleSorteData
   } = props;
 
   const {
@@ -300,6 +301,7 @@ function FiltersForm (props) {
                               }
                             });
                           }, [filter]);
+                          handleSorteData(filter)
                           return (
                             checkIncluded(filter, resource) && (
                               <PanelOption
@@ -310,7 +312,7 @@ function FiltersForm (props) {
                                   <PanelOptionTitle>
                                     {`${filter.name}`.concat(
                                       filter.unit ? ` (${filter.unit})` : ''
-                                    )}
+                                    )}  
                                   </PanelOptionTitle>
                                   {filter.info && (
                                     <DropdownWide

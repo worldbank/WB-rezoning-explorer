@@ -219,6 +219,7 @@ class PageHeader extends React.Component {
               </li>
               <li>
                 <GlobalMenuLink
+                  id="info-box"
                   as={StyledNavLink}
                   exact
                   to='/about'
