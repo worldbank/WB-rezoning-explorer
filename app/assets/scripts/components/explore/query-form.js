@@ -75,6 +75,10 @@ const ImportButton = styled(Button)`
   grid-column-end: 3;
 `;
 
+export const ZoneTypeSizeSubheading = styled(Subheadingstrong)`
+  margin-left: 5px;
+`;
+
 function QueryForm(props) {
   const {
     area,
@@ -340,9 +344,9 @@ function QueryForm(props) {
             <HeadOptionHeadline>
               <Subheading>Zone Type and Size: </Subheading>
               <Subheading variation='primary'>
-                <Subheadingstrong>
-                  { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : "Select Zone Type And Size"}
-                </Subheadingstrong>
+                <ZoneTypeSizeSubheading>
+                  { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : 'Select Zone Type And Size'}
+                </ZoneTypeSizeSubheading>
               </Subheading>
 
               <EditButton
@@ -434,9 +438,9 @@ function QueryForm(props) {
           <HeadOptionHeadline>
             <Subheading>Zone Type and Size: </Subheading>
             <Subheading variation='primary'>
-              <Subheadingstrong>
-                { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : "Select Zone Type And Size"}
-              </Subheadingstrong>
+              <ZoneTypeSizeSubheading>
+                { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : 'Select Zone Type And Size'}
+              </ZoneTypeSizeSubheading>
             </Subheading>
 
             <EditButton
