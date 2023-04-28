@@ -79,7 +79,7 @@ function LCOEForm (props) {
                               ...cost,
                               input: {
                                 ...cost.input,
-                                value: v
+                                value: parseInt(v),
                               }
                             })
 
