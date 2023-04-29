@@ -16,6 +16,7 @@ import { FormGroup } from '../../styles/form/group';
 import FormLabel from '../../styles/form/label';
 import FormTextarea from '../../styles/form/textarea';
 import FormInput from '../../styles/form/input';
+import toasts from '../common/toasts';
 
 const TrayWrapper = styled(ShadowScrollbar)`
   padding: 0.25rem;
@@ -42,6 +43,7 @@ function SubmitIssueTray (props) {
   const [issueTitle, setIssueTitle] = useState("");
   const [issueDetails, setIssueDetails] = useState("");
   const [issueType, setIssueType] = useState("bug");
+  const [email,setEmail] = useState("")
 
   let handleSubmit = async (e) => {
     // Prevent the browser from reloading the page
@@ -60,10 +62,20 @@ function SubmitIssueTray (props) {
             "title": issueTitle,
             "body": issueDetails,
             "labels":[issueType],
+            "email": email,
           }
         )
       }
-    );
+    ).then( res =>{
+      if(res.status===200){
+      toasts.success('Feedback successfully submitted')
+      setIssueTitle("");
+      setIssueDetails("");
+      setIssueType("bug");
+      setEmail("");
+    }
+  }
+    ).catch(err => console.log(err))
   }
 
   let availableLabels = [
@@ -81,19 +93,25 @@ function SubmitIssueTray (props) {
       <LayersWrapper show={show}>
         <FormWrapper active={true} disabled={false}>
           <form method="post" onSubmit={handleSubmit}>
-            <FormLabel>
+            <FormLabel style={{color: '#fff'}}>
               Title:
             </FormLabel>
-            <FormInput defaultValue="" onChange={e => { setIssueTitle(e.target.value) }} />
-            <hr />
+            <FormInput defaultValue="" value={issueTitle} onChange={e => { setIssueTitle(e.target.value) }} />
+        
+            <FormLabel style={{color: '#fff'}}>
+              Email:
+            </FormLabel>
+            <FormInput defaultValue="" value={email} onChange={e => { setEmail(e.target.value) }} />
+           
 
-            <FormLabel>
+            <FormLabel style={{color: '#fff'}}>
               Feedback type:
             </FormLabel>
             <FormGroup>
               <FormSelect
                 id={"submit-issue-form-select"}
                 onChange={e => { setIssueType(e.target.value) }}
+                value={issueType}
               >
                 {availableLabels.map(({title, value}) => {
                   return (
@@ -104,9 +122,9 @@ function SubmitIssueTray (props) {
                 })}
               </FormSelect>
             </FormGroup>
-            <hr />
+         
 
-            <FormLabel>
+            <FormLabel style={{color: '#fff'}}>
               Feedback details
             </FormLabel>
             <FormTextarea
@@ -114,9 +132,9 @@ function SubmitIssueTray (props) {
                 rows={4}
                 cols={40}
                 onChange={e => { setIssueDetails(e.target.value) }}
+                value={issueDetails}
               />
-            <Button style={{width: "100%",marginTop:'10px',border:'1px solid #dfe1e7','text-transform':'none'}} type="submit">Submit feedback</Button>
-            <hr />
+            <Button style={{width: "100%",marginTop:'10px',border:'1px solid #dfe1e7','text-transform':'none', background: '#fff'}} type="submit">Submit feedback</Button>
           </form>
         </FormWrapper>
       </LayersWrapper>

@@ -36,7 +36,7 @@ const SATELLITE = 'satellite';
 export const outputLayers = [
   {
     id: SATELLITE,
-    name: 'Satellite',
+    name: 'Satellite Basemap',
     type: 'raster',
     nonexclusive: true,
     visible: false,
