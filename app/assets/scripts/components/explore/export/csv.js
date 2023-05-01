@@ -116,7 +116,7 @@ export async function exportZoneWeightsCsv(selectedArea, selectedResource, selec
   });
 }
 
-export async function exportZonesCsv(selectedArea, zones) {
+export async function exportZonesCsv(selectedArea, selectedResource, selectedZoneType, zones) {
   const doc = format({ headers: true });
 
   const stream = doc.pipe(blobStream());

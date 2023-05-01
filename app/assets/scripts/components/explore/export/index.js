@@ -329,7 +329,7 @@ const ExportZonesButton = (props) => {
             data-dropdown='click.close'
             useIcon='table'
             onClick={() => {
-              exportZonesCsv(selectedArea, currentZones.getData());
+              exportZonesCsv(selectedArea, selectedResource, selectedZoneType, currentZones.getData());
             }}
           >
             Zones (.csv)
