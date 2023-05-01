@@ -4,7 +4,7 @@ import { wrapLogReducer } from './../contexeed';
 import {
   allowedTypes,
   INPUT_CONSTANTS,
-  RESOURCES,
+  RESOURCES
 } from '../../components/explore/panel-data';
 
 const abbreviateUnit = (unit, id) => {
@@ -70,7 +70,7 @@ export async function fetchFilters (selectedResource, dispatch) {
             type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type),
             ...opts
           },
-          visible: selectedResource == RESOURCES.SOLAR ? filter.id === "f_gsa_pvout" : filter.id === "f_gwa_speed_100",
+          visible: selectedResource === RESOURCES.SOLAR ? filter.id === 'f_gsa_pvout' : filter.id === 'f_gwa_speed_100'
         };
       });
     dispatch({ type: 'RECEIVE_FETCH_FILTERS', data: apiFilters });
