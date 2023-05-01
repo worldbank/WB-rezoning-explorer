@@ -163,7 +163,7 @@ export async function fetchZones (
       if (!get(z, 'properties.summary.zone_score')) return z;
 
       const zoneScore = z.properties.summary.zone_score / maxScore;
-      const color = zoneScoreColor(zoneScore, minScore, maxScore);
+      const color = zoneScoreColor(z.properties.summary.zone_score, minScore, maxScore);
       return {
         ...z,
         properties: {
