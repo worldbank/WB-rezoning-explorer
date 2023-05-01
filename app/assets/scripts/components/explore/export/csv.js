@@ -7,15 +7,15 @@ const { indicatorsDecimals } = config;
 
 export async function exportSpatialFiltersCsv(selectedArea, selectedResource, selectedZoneType, filters) {
   const doc = format({ headers: true });
-  console.log( "selectedResource", selectedResource );
-  console.log( "selectedZoneType", selectedZoneType );
+  console.log('selectedResource', selectedResource);
+  console.log('selectedZoneType', selectedZoneType);
 
   const stream = doc.pipe(blobStream());
 
   // Parse filters
   const rows = filters
     .map(filter => {
-      let filter_row = {
+      const filter_row = {
         id: filter.id,
         title: filter.title,
         description: filter.description,
@@ -28,14 +28,13 @@ export async function exportSpatialFiltersCsv(selectedArea, selectedResource, se
         isRange: filter.isRange,
         value: !filter.isRange ? filter.input.value : undefined,
         min_value: filter.isRange ? filter.input.value.min : undefined,
-        max_value: filter.isRange ? filter.input.value.max : undefined,
+        max_value: filter.isRange ? filter.input.value.max : undefined
       };
       return filter_row;
     });
 
   // Add filters to CSV
-  rows.forEach((z) => doc.write(z) );
-
+  rows.forEach((z) => doc.write(z));
 
   doc.end();
 
@@ -45,6 +44,14 @@ export async function exportSpatialFiltersCsv(selectedArea, selectedResource, se
       `WBG-REZoning-${selectedArea.id}-${selectedResource}-${selectedZoneType.name}-spatial-filters-${getTimestamp()}.csv`
     );
   });
+}
+
+function stringifyIfObject(value) {
+  // Check if the value is an object and not an array or null
+  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    return JSON.stringify(value);
+  }
+  return value;
 }
 
 export async function exportEconomicParametersCsv(selectedArea, selectedResource, selectedZoneType, lcoeValues) {
@@ -60,16 +67,14 @@ export async function exportEconomicParametersCsv(selectedArea, selectedResource
         title: param.title,
         description: param.description.replace(';', ' '),
         category: param.category,
-        input: JSON.stringify( param.input ),
         type: param.type,
         priority: param.priority,
-        value: JSON.stringify( param.input.value ),
+        value: stringifyIfObject(param.input.value)
       };
     });
 
   // Add economic parameters to CSV
-  rows.forEach((z) => doc.write(z) );
-
+  rows.forEach((z) => doc.write(z));
 
   doc.end();
 
@@ -88,19 +93,18 @@ export async function exportZoneWeightsCsv(selectedArea, selectedResource, selec
 
   // Parse economic parameters
   const rows = weightsValues
-    .map( param => {
+    .map(param => {
       return {
         id: param.id,
         title: param.title,
         description: param.description.replace(';', ' '),
         isPercentage: true,
-        value: JSON.stringify( param.input.value ),
+        value: JSON.stringify(param.input.value)
       };
     });
 
   // Add economic parameters to CSV
-  rows.forEach((z) => doc.write(z) );
-
+  rows.forEach((z) => doc.write(z));
 
   doc.end();
 
@@ -113,7 +117,6 @@ export async function exportZoneWeightsCsv(selectedArea, selectedResource, selec
 }
 
 export async function exportZonesCsv(selectedArea, zones) {
-
   const doc = format({ headers: true });
 
   const stream = doc.pipe(blobStream());
