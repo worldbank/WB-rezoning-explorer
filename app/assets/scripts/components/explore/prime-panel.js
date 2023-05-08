@@ -139,6 +139,18 @@ function ExpMapPrimePanel (props) {
   React.useEffect(() => {
     if (!(Object.keys(currentZones?.data).length === 0)) {
       setShowRasterPanel(true);
+      
+      setMapLayers(mapLayers.map(layer => {
+        if (layer.category === 'output') {
+          layer.disabled = false;
+          if (layer.visible) {
+            map.setLayoutProperty(layer.id, 'visibility', 'visible');
+            layer.visible = true;
+          }
+        }
+        return layer;
+      })
+      );
     }
   }, [currentZones?.data]);
 
