@@ -107,6 +107,9 @@ function QueryForm(props) {
     setSelectedResource,
     setSelectedZoneType,
 
+    importingData,
+    setImportingData,
+
     firstLoad
   } = props;
 
@@ -245,6 +248,12 @@ function QueryForm(props) {
     updateFilteredLayer(filters, weightsValues, lcoeValues);
   };
   useEffect(() => {
+    /* if in the process of importing data then don't re-initialize */
+    if (importingData) {
+      setImportingData(false);
+      return;
+    }
+
     /* When filter ranges update we should reset to match ranges */
     initialize(filtersLists, filtersInd, {
       // On first load, we do not reset. Set values from url
@@ -284,7 +293,8 @@ function QueryForm(props) {
   }, [resource]);
 
   const handleImportCSV = (results, fileInfo) => {
-    let indexDict = {};
+    const indexDict = {};
+    setImportingData(true);
     results.data[0].map((i, index) => (indexDict[i] = index));
     try {
       if (
@@ -293,9 +303,12 @@ function QueryForm(props) {
         )
       ) {
         filtersInd.forEach(([filter, setFilter]) => {
-          let reqArray = results.data.find(
+          const reqArray = results.data.find(
             (it) => it[indexDict['id']] == filter.id
           );
+          if (typeof reqArray === 'undefined') {
+            return; // Skip this
+          }
           if (filter.input.type == 'multi-select') {
             filter.input.value = reqArray[indexDict['value']]
               .split(',')
@@ -303,8 +316,8 @@ function QueryForm(props) {
           } else if (filter.input.type == 'boolean') {
             filter.input.value = reqArray[indexDict['value']];
           } else {
-            filter.input.value.max = reqArray[indexDict['max_value']];
-            filter.input.value.min = reqArray[indexDict['min_value']];
+            filter.input.value.max = parseFloat(reqArray[indexDict['max_value']]);
+            filter.input.value.min = parseFloat(reqArray[indexDict['min_value']]);
           }
           setFilter(filter);
         });
@@ -314,11 +327,11 @@ function QueryForm(props) {
         )
       ) {
         lcoeInd.forEach(([filter, setFilter]) => {
-          let reqArray = results.data.find(
+          const reqArray = results.data.find(
             (it) => it[indexDict['id']] == filter.id
           );
           if (filter.input.type == 'dropdown') {
-            let selectedOption = filter.input.availableOptions.find(
+            const selectedOption = filter.input.availableOptions.find(
               (option) =>
                 JSON.parse(reqArray[indexDict['value']]).id == option.id
             );
@@ -336,7 +349,7 @@ function QueryForm(props) {
         )
       ) {
         weightsInd.forEach(([filter, setFilter]) => {
-          let reqArray = results.data.find(
+          const reqArray = results.data.find(
             (it) => it[indexDict['id']] == filter.id
           );
           filter.input.value = reqArray[indexDict['value']];
@@ -350,6 +363,7 @@ function QueryForm(props) {
       // In case the app gets supplied a wrong csv file
       console.error('Error reading file:', error);
       alert('invalid file');
+      setImportingData(false);
       return false;
     }
     setShowUploadModal(false);
@@ -638,6 +652,7 @@ function QueryForm(props) {
           setSelectedAreaId={setSelectedAreaId}
           setSelectedResource={setSelectedResource}
           setSelectedZoneType={setSelectedZoneType}
+          selectedZoneType={selectedZoneType}
           handleImportCSV={handleImportCSV}
         />
       </ModalUpload>
@@ -662,7 +677,9 @@ QueryForm.propTypes = {
   onSelectionChange: T.func,
   selectedZoneType: T.object,
   onZoneTypeEdit: T.func,
-  firstLoad: T.object
+  firstLoad: T.object,
+  importingData: T.bool,
+  setImportingData: T.func
 };
 
 export default QueryForm;

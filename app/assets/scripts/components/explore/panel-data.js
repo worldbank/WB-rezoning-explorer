@@ -91,17 +91,17 @@ export const zoneTypesList = [
   {
     name: BOUNDARIES,
     type: BOUNDARIES,
-    size: 0,
+    size: '0'
   },
   {
     name: `${GRID}-${GRID_OPTIONS[0]}`,
     type: GRID,
-    size: GRID_OPTIONS[0],
+    size: '' + GRID_OPTIONS[0]
   },
   {
     name: `${GRID}-${GRID_OPTIONS[1]}`,
     type: GRID,
-    size: GRID_OPTIONS[1],
+    size: '' + GRID_OPTIONS[1]
   }
 ];
 

@@ -112,6 +112,7 @@ export function ExploreProvider (props) {
   // Area context
   const [areas, setAreas] = useState(areasList);
   const [selectedArea, setSelectedArea] = useState(null);
+  const [importingData, setImportingData] = useState(false);
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined,
@@ -457,6 +458,8 @@ export function ExploreProvider (props) {
           availableZoneTypes,
           selectedZoneType,
           setSelectedZoneType,
+          importingData,
+          setImportingData,
 
           currentZones,
           generateZones,

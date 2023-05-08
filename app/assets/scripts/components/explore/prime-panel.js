@@ -94,7 +94,9 @@ function ExpMapPrimePanel (props) {
     tourStep,
     setTourStep,
     updateFilteredLayer,
-    currentZones
+    currentZones,
+    importingData,
+    setImportingData
   } = useContext(ExploreContext);
 
   const {
@@ -281,6 +283,8 @@ function ExpMapPrimePanel (props) {
               setSelectedAreaId={setSelectedAreaId}
               setSelectedResource={setSelectedResource}
               setSelectedZoneType={setSelectedZoneType}
+              importingData={importingData}
+              setImportingData={setImportingData}
             />
           ) : (
             <PanelBlock>
