@@ -140,7 +140,8 @@ function Panel(props) {
     additionalControls,
     onPanelChange
   } = props;
-  const { currentZones } = useContext(ExploreContext);
+  const { currentZones,selectedResource } = useContext(ExploreContext);
+  const [prevSelectedResource,setPrevSelectedResource] = useState(selectedResource)
 
   const onCollapseClick=()=> {
     if (overrideControl) {
@@ -150,12 +151,19 @@ function Panel(props) {
     setRevealed(!revealed);
     onPanelChange && onPanelChange(setRevealed(!revealed) );
   }
-
+ 
   useEffect(()=>{
+    setPrevSelectedResource(selectedResource)
     if(!(Object.keys(currentZones?.data).length === 0)){
       setRevealed(true)
     }
-  },[currentZones?.data])
+    else if(props.direction === 'right'){
+      setRevealed(false)
+    }
+    if(selectedResource != prevSelectedResource && props.direction === 'right'){
+      setRevealed(false)
+    }
+  },[currentZones?.data, selectedResource])
 
   
 
