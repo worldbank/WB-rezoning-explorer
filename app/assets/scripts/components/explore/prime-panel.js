@@ -163,7 +163,7 @@ function ExpMapPrimePanel (props) {
     );
     if (selectedResource === RESOURCES.OFFSHORE) {
       availableZone.map(
-        (zoneType) => selectedZoneType && selectedZoneType.size === 0 && zoneType.size === 25 && setSelectedZoneType(zoneType)
+        (zoneType) => selectedZoneType && selectedZoneType.size === '0' && zoneType.size === '25' && setSelectedZoneType(zoneType)
       );
     }
   }, [selectedResource]);
