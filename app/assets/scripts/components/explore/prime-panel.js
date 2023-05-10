@@ -162,9 +162,10 @@ function ExpMapPrimePanel (props) {
         selectedResource !== RESOURCES.OFFSHORE || zoneType?.type !== BOUNDARIES
     );
     if (selectedResource === RESOURCES.OFFSHORE) {
-      availableZone.map(
-        (zoneType) => selectedZoneType && selectedZoneType.size === '0' && zoneType.size === '25' && setSelectedZoneType(zoneType)
-      );
+      const targetZoneType = availableZone.find((zoneType) => selectedZoneType && selectedZoneType.size === '0' && zoneType.size === '25')
+      if (targetZoneType) {
+        setSelectedZoneType(targetZoneType);
+    }
     }
   }, [selectedResource]);
   return (
