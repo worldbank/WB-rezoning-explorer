@@ -19,7 +19,6 @@ import { scaleLinear } from '@visx/scale';
 import colormap from 'colormap';
 import MakiIcon from '../maki-icon';
 
-
 const MapLegendSelf = styled.div`
   ${cardSkin}
   z-index: 10;
@@ -341,7 +340,7 @@ ZoneScoreLegendItem.propTypes = {
   mapLayers: T.array,
   wide: T.bool,
   minLabel: T.oneOfType([T.number, T.string]),
-  maxLabel: T.oneOfType([T.number, T.string]),
+  maxLabel: T.oneOfType([T.number, T.string])
 };
 
 export default function MapLegend({
@@ -355,15 +354,9 @@ export default function MapLegend({
   const landCoverVisible =
     mapLayers.filter(({ id, visible }) => id === 'land-cover' && visible)
       .length > 0;
-  let minZoneScore = 0, maxZoneScore = 1;
-  if ( Array.isArray( currentZones?.data ) )
-  {
-    minZoneScore = Math.min( ...currentZones.data.map( z => get(z, 'properties.summary.zone_score', 1.0) ) );
-    maxZoneScore = Math.max( ...currentZones.data.map( z => get(z, 'properties.summary.zone_score', 0.0) ) );
-    minZoneScore = Math.floor( minZoneScore * 1000.0 ) / 1000.0;
-    maxZoneScore = Math.ceil( maxZoneScore * 1000.0 ) / 1000.0;
-  }
-    
+  const minZoneScore = 0;
+  const maxZoneScore = 1;
+
   return (
     <MapLegendSelf wide={landCoverVisible} id='map-legend' isExpanded={showMapLegend}>
       <LegendFoldTrigger

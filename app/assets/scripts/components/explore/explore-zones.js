@@ -196,10 +196,8 @@ function ExploreZones (props) {
 
   const [sortId, setSortId] = useState('lcoe');
 
-  let minZoneScore = Math.min( ...currentZones.map( z => get(z, 'properties.summary.zone_score', 1.0) ) );
-  let maxZoneScore = Math.max( ...currentZones.map( z => get(z, 'properties.summary.zone_score', 0.0) ) );
-  minZoneScore = Math.floor( minZoneScore * 1000.0 ) / 1000.0;
-  maxZoneScore = Math.ceil( maxZoneScore * 1000.0 ) / 1000.0;
+  const minZoneScore = 0;
+  const maxZoneScore = 1;
 
   return (
     currentZones.length == 0 ?
