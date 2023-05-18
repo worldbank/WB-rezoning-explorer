@@ -66,7 +66,7 @@
         "alpha2": "AW",
         "name": "Aruba",
         "type": "country",
-        "bounds": "-70.063,12.412,-69.865,12.624",
+        "bounds": "-70.2809842,12.8102998,-69.6409842,12.1702998",
         "available_resources": [
             "Solar PV",
             "Onshore Wind",
