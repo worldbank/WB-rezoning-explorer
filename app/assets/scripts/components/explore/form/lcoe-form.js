@@ -74,16 +74,16 @@ function LCOEForm (props) {
                         })
 
                         .map(([cost, setCost], ind) => {
-                          const onChange = useCallback(
-                            (v) => setCost({
+                          const onChange = useCallback((v) => {
+                            const selectedObject = cost.input.availableOptions.find(obj => obj.id === v);
+                            setCost({
                               ...cost,
                               input: {
                                 ...cost.input,
-                                value: parseInt(v),
-                              }
-                            })
-
-                            );
+                                value: cost.input.type === 'dropdown' ? selectedObject : parseInt(v),
+                              },
+                            });
+                          });
                           handleEconomicSortedData(cost)
                           return (
                             <PanelOption key={cost.name} hidden={!isFoldExpanded}>
