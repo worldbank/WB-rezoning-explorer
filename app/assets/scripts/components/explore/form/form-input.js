@@ -165,7 +165,7 @@ const FormInput = ({ option, onChange, isWeight, isLocked, onLockChange }) => {
             onChange={(e) => {
               onChange(e.target.value);
             }}
-            value={option.input.availableOptions.find((opt) => opt.id === option.input.value)?.name}
+            value={value?.id}
           >
             {option.input.availableOptions.map(({ name, id }) => {
               return (

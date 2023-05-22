@@ -336,7 +336,7 @@ function QueryForm(props) {
                 JSON.parse(reqArray[indexDict['value']]).id == option.id
             );
             if (selectedOption) {
-              filter.input.value = selectedOption.id;
+              filter.input.value = selectedOption;
             }
           } else {
             filter.input.value = reqArray[indexDict['value']];
@@ -519,7 +519,7 @@ function QueryForm(props) {
           </HeadOptionHeadline>
         </HeadOption>
       </PanelBlockHeader>
-
+      
       <TabbedBlockBody setActivePanel={setActivePanel}>
         <FiltersForm
           id='filters-tab'

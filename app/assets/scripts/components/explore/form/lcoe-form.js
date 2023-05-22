@@ -75,12 +75,12 @@ function LCOEForm (props) {
 
                         .map(([cost, setCost], ind) => {
                           const onChange = useCallback((v) => {
-                            const selectedObject = cost.input.availableOptions.find(obj => obj.id === v);
+                            const selectedObject = cost.input.type === 'dropdown' && cost.input.availableOptions.find(obj => obj.id === v);
                             setCost({
                               ...cost,
                               input: {
                                 ...cost.input,
-                                value: cost.input.type === 'dropdown' ? selectedObject : parseInt(v),
+                                value: selectedObject ? selectedObject : parseInt(v),
                               },
                             });
                           });
