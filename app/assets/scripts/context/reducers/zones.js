@@ -77,7 +77,7 @@ export async function fetchZones (
 
     if (selectedResource === 'Off-Shore Wind') {
       // if offshore wind, we are already in grid and bounds are eez bounds
-      features = squareGrid(selectedArea.bounds, selectedZoneType.size, {
+      features = squareGrid(selectedArea.bounds, Math.sqrt(parseInt(selectedZoneType.size)), {
         units: 'kilometers',
         mask: {
           type: 'FeatureCollection',
@@ -97,7 +97,7 @@ export async function fetchZones (
           zonesTopoJSON.objects[areaId].geometries
         );
 
-        const areaGrid = squareGrid(selectedArea.bounds, selectedZoneType.size, {
+        const areaGrid = squareGrid(selectedArea.bounds, Math.sqrt(parseInt(selectedZoneType.size)), {
           mask: areaLimits,
           units: 'kilometers'
         });
