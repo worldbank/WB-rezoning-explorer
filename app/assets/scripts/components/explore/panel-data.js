@@ -59,11 +59,15 @@ const BOOL = 'boolean';
 const MULTI = 'multi-select';
 const TEXT = 'text';
 const DROPDOWN = 'dropdown';
-const GRID_OPTIONS = [25, 50];
+const GRID_OPTIONS = [5, 25, 50];
 const DEFAULT_RANGE = [0, 1000000];
 const DEFAULT_UNIT = '%';
 export const DEFAULT_WEIGHT_RANGE = [0, 1];
 export const DEFAULT_WEIGHT_VALUE = 0.5;
+
+// Maximum number of 25Km2 zones that can be displayed.
+// If the number of zones exceeding this limit, the corresponding display option will be hidden.
+export const MAX_DISPLAYABLE_ZONES_OF_25KM2 = 5000;
 
 export const INPUT_CONSTANTS = {
   SLIDER,
@@ -84,7 +88,7 @@ allowedTypes.set('categorical_filter', MULTI);
 export const presets = {};
 
 export const BOUNDARIES = 'Boundaries';
-export const GRID = 'Grid'
+export const GRID = 'Grid';
 
 // TODO: Expand GRID_OPTIONS programmatically
 export const zoneTypesList = [
@@ -102,6 +106,11 @@ export const zoneTypesList = [
     name: `${GRID}-${GRID_OPTIONS[1]}`,
     type: GRID,
     size: '' + GRID_OPTIONS[1]
+  },
+  {
+    name: `${GRID}-${GRID_OPTIONS[2]}`,
+    type: GRID,
+    size: '' + GRID_OPTIONS[2]
   }
 ];
 

@@ -46,7 +46,7 @@ function ModalSelectZoneType (props) {
               setSelectedZoneType(zoneType);
             }}
           >
-            { zoneType.size > 0 ? `${zoneType.size} km² Grid` : 'Administrative Boundaries'}
+            { zoneType.size > 0 ? `${zoneType.size} km Grid` : 'Administrative Boundaries'}
           </Button>
         </CardWrapper>
       )}

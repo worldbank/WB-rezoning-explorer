@@ -6,7 +6,8 @@ import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
 import MapContext from '../../context/map-context';
 import FormContext from '../../context/form-context';
-
+import area from '@turf/area';
+import bboxPolygon from '@turf/bbox-polygon';
 import ModalSelect from './modal-select';
 import { ModalHeadline } from '@devseed-ui/modal';
 import ModalSelectArea from './modal-select-area';
@@ -24,7 +25,12 @@ import { PanelBlock, PanelBlockBody, PanelBlockHeader } from '../common/panel-bl
 import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import Prose from '../../styles/type/prose';
 import { themeVal } from '../../styles/utils/general';
-import { RESOURCES, BOUNDARIES } from './panel-data';
+import {
+  RESOURCES,
+  BOUNDARIES,
+  zoneTypesList,
+  MAX_DISPLAYABLE_ZONES_OF_25KM2
+} from './panel-data';
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
@@ -88,6 +94,7 @@ function ExpMapPrimePanel (props) {
     setSelectedAreaId,
 
     availableZoneTypes,
+    setAvailableZoneTypes,
     selectedZoneType,
     setSelectedZoneType,
 
@@ -122,6 +129,17 @@ function ExpMapPrimePanel (props) {
   const [showRasterPanel, setShowRasterPanel] = useState(false);
   const [showSubmitIssuePanel, setShowSubmitIssuePanel] = useState(false);
 
+  function calculateBoundingBoxArea(boundingBox) {
+    // Create a polygon representing the bounding box
+    const boundingBoxPolygon = bboxPolygon(boundingBox);
+
+    // Calculate the area using turf.area
+    const areaSize = area(boundingBoxPolygon);
+
+    // Convert square meters to square kilometers
+    return areaSize / 1e6;
+  }
+
   const onAreaEdit = () => {
     setShowSelectAreaModal(true);
     setShowSelectResourceModal(false);
@@ -141,7 +159,6 @@ function ExpMapPrimePanel (props) {
   React.useEffect(() => {
     if (!(Object.keys(currentZones?.data).length === 0)) {
       setShowRasterPanel(true);
-      
       setMapLayers(mapLayers.map(layer => {
         if (layer.category === 'output') {
           layer.disabled = false;
@@ -157,17 +174,44 @@ function ExpMapPrimePanel (props) {
   }, [currentZones?.data]);
 
   React.useEffect(() => {
-    const availableZone = availableZoneTypes.filter(
-      (zoneType) =>
-        selectedResource !== RESOURCES.OFFSHORE || zoneType?.type !== BOUNDARIES
+    if (!selectedArea || !selectedResource) return;
+
+    // Find area size in selectedArea
+    let areaInKm2 = 0;
+    try {
+      areaInKm2 = selectedArea.eez[0].properties.AREA_KM2;
+    } catch (e) {
+    }
+    if (!areaInKm2) {
+      areaInKm2 = calculateBoundingBoxArea(selectedArea.bounds);
+    }
+    const total25Zones = parseInt(areaInKm2 / 25);
+    let targetZoneType = null;
+    const availableZones = zoneTypesList.filter(
+      (zoneType) => {
+        if (selectedResource !== RESOURCES.OFFSHORE && zoneType?.size === '0') {
+          return true;
+        }
+        if (total25Zones <= MAX_DISPLAYABLE_ZONES_OF_25KM2) {
+          return zoneType?.size === '5' || zoneType?.size === '25';
+        }
+        if (total25Zones > MAX_DISPLAYABLE_ZONES_OF_25KM2) {
+          return zoneType?.size === '25' || zoneType?.size === '50';
+        }
+        return false;
+      }
     );
-    if (selectedResource === RESOURCES.OFFSHORE) {
-      const targetZoneType = availableZone.find((zoneType) => selectedZoneType && selectedZoneType.size === '0' && zoneType.size === '25')
-      if (targetZoneType) {
-        setSelectedZoneType(targetZoneType);
+    if ((selectedResource === RESOURCES.OFFSHORE && selectedZoneType?.size === '0')) {
+      targetZoneType = availableZones.filter(zone => zone.size !== '0')[0];
     }
+    if (!availableZones.find(_zone => _zone?.size === selectedZoneType?.size)) {
+      targetZoneType = [];
     }
-  }, [selectedResource]);
+    setAvailableZoneTypes(availableZones);
+    if (targetZoneType) {
+      setSelectedZoneType(targetZoneType);
+    }
+  }, [selectedResource, selectedArea]);
   return (
     <>
       <PrimePanel
@@ -351,7 +395,7 @@ function ExpMapPrimePanel (props) {
                     <Subheading>Zone Type and Size: </Subheading>
                     <Subheading variation='primary'>
                       <ZoneTypeSizeSubheading>
-                        { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : 'Select Zone Type And Size'}
+                        { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km` : 'Boundaries' : 'Select Zone Type And Size'}
                       </ZoneTypeSizeSubheading>
                     </Subheading>
                     <EditButton
@@ -432,9 +476,7 @@ function ExpMapPrimePanel (props) {
 
       <ModalSelectZoneType
         revealed={!showSelectAreaModal && !showSelectResourceModal && showSelectZoneTypeModal}
-        availableZoneTypes={availableZoneTypes.filter(zoneType =>
-          selectedResource !== RESOURCES.OFFSHORE || zoneType?.type !== BOUNDARIES
-        )}
+        availableZoneTypes={availableZoneTypes}
         selectedZoneType={selectedZoneType}
         setSelectedZoneType={setSelectedZoneType}
         setShowSelectZoneTypeModal={setShowSelectZoneTypeModal}

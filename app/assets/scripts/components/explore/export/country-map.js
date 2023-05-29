@@ -93,7 +93,7 @@ function drawHeader (doc, selectedArea, selectedResource, selectedZoneType) {
     .font(boldFont)
     .text('ZONE TYPE AND SIZE:  ', options.margin * 1.5, (options.margin / 2) + 18, { continued: true })
     .font(baseFont)
-    .text(selectedZoneType.size > 0 ? `Grid: ${selectedZoneType.size}km²` : 'Administrative Boundaries');
+    .text(selectedZoneType.size > 0 ? `Grid: ${selectedZoneType.size}km` : 'Administrative Boundaries');
 
   // Logos
   doc.image(

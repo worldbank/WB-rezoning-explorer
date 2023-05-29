@@ -413,7 +413,7 @@ function QueryForm(props) {
               <Subheading>Zone Type and Size: </Subheading>
               <Subheading variation='primary'>
                 <ZoneTypeSizeSubheading>
-                  { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : 'Select Zone Type And Size'}
+                  { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km` : 'Boundaries' : 'Select Zone Type And Size'}
                 </ZoneTypeSizeSubheading>
               </Subheading>
 
@@ -505,7 +505,7 @@ function QueryForm(props) {
             <Subheading>Zone Type and Size: </Subheading>
             <Subheading variation='primary'>
               <ZoneTypeSizeSubheading>
-                { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km²` : 'Boundaries' : 'Select Zone Type And Size'}
+                { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km` : 'Boundaries' : 'Select Zone Type And Size'}
               </ZoneTypeSizeSubheading>
             </Subheading>
 

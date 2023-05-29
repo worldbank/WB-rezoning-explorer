@@ -235,14 +235,15 @@ export function ExploreProvider (props) {
     setAreas(areasWithEez);
     const currentArea = areasWithEez.find((a) => a.id === selectedAreaId);
 
-    areasInitialized.current = true;
     updateAvailableResources(currentArea);
+    areasInitialized.current = true;
 
     hideGlobalLoading();
   };
 
   // Handle selected area id changes
   useEffect(() => {
+    if (!areasInitialized.current) return;
     // Clear current zones
     dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
 
@@ -250,11 +251,12 @@ export function ExploreProvider (props) {
     const area = areas.find((a) => a.id === selectedAreaId);
     setSelectedArea(area);
     updateAvailableResources(area);
-  }, [selectedAreaId]);
+  }, [selectedAreaId, areasInitialized]);
 
   // Find selected area based on changes in id
   // Change options based on energy type
   useEffect(() => {
+    if (!areasInitialized.current) return;
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
     if (selectedResource === 'Off-Shore Wind' && nextArea) {
@@ -270,7 +272,7 @@ export function ExploreProvider (props) {
 
     setSelectedArea(nextArea);
     updateAvailableResources(nextArea);
-  }, [areas, selectedAreaId, selectedResource]);
+  }, [areas, selectedAreaId, selectedResource, areasInitialized]);
 
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
@@ -456,6 +458,7 @@ export function ExploreProvider (props) {
           setSelectedResource,
 
           availableZoneTypes,
+          setAvailableZoneTypes,
           selectedZoneType,
           setSelectedZoneType,
           importingData,
