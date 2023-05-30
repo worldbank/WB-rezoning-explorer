@@ -67,7 +67,7 @@ export const DEFAULT_WEIGHT_VALUE = 0.5;
 
 // Maximum number of 25Km2 zones that can be displayed.
 // If the number of zones exceeding this limit, the corresponding display option will be hidden.
-export const MAX_DISPLAYABLE_ZONES_OF_25KM2 = 5000;
+export const MAX_DISPLAYABLE_ZONES_OF_25KM2 = 2000;
 
 export const INPUT_CONSTANTS = {
   SLIDER,

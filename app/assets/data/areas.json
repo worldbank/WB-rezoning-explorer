@@ -1482,7 +1482,7 @@
         "alpha2": "KI",
         "name": "Kiribati",
         "type": "country",
-        "bounds": "-174.543,-17.852,176.849,4.699",
+        "bounds": "-179.1645388,-7.0516717,-164.1645388,7.9483283",
         "available_resources": [
             "Solar PV",
             "Onshore Wind",
