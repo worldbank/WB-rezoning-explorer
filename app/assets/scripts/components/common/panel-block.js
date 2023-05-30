@@ -30,7 +30,6 @@ export const PanelBlockFooter = styled.footer`
   background: ${_tint(0.02, themeVal('color.surface'))};
   position: relative;
   z-index: 10;
-  padding: ${glsp()} ${glsp(1.5)};
 `;
 
 export const PanelBlockFooterRow = styled.footer`

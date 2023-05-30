@@ -7,7 +7,6 @@ import {
   PanelBlock,
   PanelBlockHeader,
   PanelBlockBody,
-  PanelBlockFooter
 } from '../common/panel-block';
 
 import SubmitIssueTray from './submit-issue-tray';
@@ -41,7 +40,6 @@ function ExpMapSecPanel(props) {
   const { onPanelChange } = props;
   const { currentZones } = useContext(ExploreContext);
   const { inputTouched } = useContext(FormContext);
-  const [showSubmitIssuePanel, setShowSubmitIssuePanel] = useState(false);
 
   return (
     <SecPanel
@@ -68,7 +66,7 @@ function ExpMapSecPanel(props) {
                 )}
 
             </PanelBlockBody>
-            <PanelBlockFooter>
+            {/* <PanelBlockFooter>
               <div style={{align: "center", display:'grid', backgroundColor: '#23a7f5'}}>
                 
                 { showSubmitIssuePanel ? <Button
@@ -102,7 +100,7 @@ function ExpMapSecPanel(props) {
                   : null
                 }
               </div>
-            </PanelBlockFooter>
+            </PanelBlockFooter> */}
           </PanelBlock>
         </>
       }

@@ -19,6 +19,7 @@ import { multiply } from '../../styles/utils/math';
 import media from '../../styles/utils/media-queries';
 
 import LogoReverse from '../../../icons/collecticons/logo-reverse';
+import FeedbackForm from './feeback-form';
 
 const _rgba = stylizeFunction(rgba);
 
@@ -94,9 +95,6 @@ const GlobalMenu = styled.ul`
   ${media.mediumUp`
     > *:first-child {
       margin: 0;
-    }
-    > *:last-child {
-      margin-top: auto;
     }
   `}
 `;
@@ -229,6 +227,9 @@ class PageHeader extends React.Component {
                 >
                   <span>About</span>
                 </GlobalMenuLink>
+              </li>
+               <li style={{marginTop:'auto', textAlign:'center'}}>
+                <FeedbackForm/>
               </li>
               <li>
                 <ShareOptions />
