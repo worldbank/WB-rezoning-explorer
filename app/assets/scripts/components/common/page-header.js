@@ -62,7 +62,6 @@ const PageNav = styled.nav`
   ${media.mediumUp`
     flex-flow: column nowrap;
   `}
-
 `;
 
 const GlobalMenu = styled.ul`
@@ -90,7 +89,6 @@ const GlobalMenu = styled.ul`
     flex-flow: column nowrap;
     justify-content: center;
   `}
-
 
   ${media.mediumUp`
     > *:first-child {
@@ -151,7 +149,7 @@ const GlobalMenuLink = styled.a`
   &:visited {
     color: inherit;
   }
-  
+
   &:hover {
     opacity: 1;
     background: ${_rgba(themeVal('color.baseLight'), 0.08)};
@@ -174,7 +172,7 @@ const StyledNavLink = filterComponentProps(NavLink, propsToFilter);
 const StyledLink = filterComponentProps(Link, propsToFilter);
 
 class PageHeader extends React.Component {
-  render () {
+  render() {
     return (
       <PageHead role='banner'>
         <PageHeadInner>
@@ -217,7 +215,7 @@ class PageHeader extends React.Component {
               </li>
               <li>
                 <GlobalMenuLink
-                  id="info-box"
+                  id='info-box'
                   as={StyledNavLink}
                   exact
                   to='/about'
@@ -228,8 +226,8 @@ class PageHeader extends React.Component {
                   <span>About</span>
                 </GlobalMenuLink>
               </li>
-               <li style={{marginTop:'auto', textAlign:'center'}}>
-                <FeedbackForm/>
+              <li style={{ marginTop: 'auto', textAlign: 'center' }}>
+                <FeedbackForm />
               </li>
               <li>
                 <ShareOptions />
@@ -242,7 +240,6 @@ class PageHeader extends React.Component {
   }
 }
 
-PageHeader.propTypes = {
-};
+PageHeader.propTypes = {};
 
 export default PageHeader;

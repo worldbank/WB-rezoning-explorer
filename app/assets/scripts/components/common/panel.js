@@ -166,15 +166,6 @@ function Panel(props) {
     }  
   },[currentZones?.data, selectedResource])
 
-  useEffect(()=>{
-    if(tourStep === 7 || tourStep === 9){
-      setRevealed(true)
-    }
-    else if(tourStep != 8 && props.direction === 'right'){
-      setRevealed(false)
-    }
-  },[tourStep])
-  
 
   const icon =
     direction === 'left'

@@ -12,6 +12,7 @@ function FeedbackForm() {
       direction='down'
       triggerElement={
         <Button
+          id='toggle-feedback-tray'
           variation='achromic-plain'
           title='Toggle Feedback Form'
           hideText
