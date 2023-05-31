@@ -8,6 +8,7 @@ import SubmitIssueTray from '../explore/submit-issue-tray';
 function FeedbackForm() {
   return (
     <Dropdown
+      className='feedback'
       alignment='right'
       direction='down'
       triggerElement={
@@ -22,7 +23,7 @@ function FeedbackForm() {
         </Button>
       }
     >
-      <DropTitle>Feedback Form</DropTitle>
+      <span style={{color:'white'}}>Feedback Form</span>
       <PanelBlockFooter>
         <div
           style={{
