@@ -1518,7 +1518,7 @@
         "alpha2": "XK",
         "name": "Kosovo",
         "type": "country",
-        "bounds": "25.237,-22.42,33.056,-15.609",
+        "bounds": "19.98213959,41.78193665,21.79304886,43.24406815",
         "available_resources": [
         "Solar PV",
         "Onshore Wind",
