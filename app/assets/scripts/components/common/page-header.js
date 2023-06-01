@@ -84,6 +84,11 @@ const GlobalMenu = styled.ul`
     height: 3rem;
     text-align: center;
   }
+  > *:nth-last-child(2) > * {
+    width: 3rem;
+    height: 3rem;
+    text-align: center;
+  }
 
   ${media.mediumUp`
     flex-flow: column nowrap;

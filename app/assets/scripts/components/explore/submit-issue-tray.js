@@ -19,14 +19,14 @@ import FormInput from '../../styles/form/input';
 import toasts from '../common/toasts';
 
 const TrayWrapper = styled(ShadowScrollbar)`
-  padding: 0.25rem;
-  height: ${({ show }) => show ? 21 : 0}rem;
+  padding: 0.25rem 0;
+  height: ${({ show }) => show ? 400 : 0}px;
 `;
 
 const LayersWrapper = styled.div`
   opacity: ${({ show }) => show ? 1 : 0};
   transition: opacity .16s ease 0s;
-  padding: 0.5rem;
+  padding: 0;
   overflow-x: hidden;
   ${AccordionFold} {
     padding-bottom: 1rem;
