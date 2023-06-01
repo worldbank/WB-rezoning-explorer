@@ -125,6 +125,7 @@
         "gid": "AND",
         "alpha2": "AD",
         "name": "Andorra",
+        "area": 467,
         "type": "country",
         "bounds": "1.414,42.429,1.784,42.652",
         "available_resources": [

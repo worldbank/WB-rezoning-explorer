@@ -176,9 +176,9 @@ function ExpMapPrimePanel (props) {
     else {
       setShowRasterPanel(false);
     }
-    if(selectedResource != prevSelectedResource ){
+    if (selectedResource != prevSelectedResource ){
       setShowRasterPanel(false);
-    }  
+    }
   }, [currentZones?.data,selectedResource]);
 
   React.useEffect(() => {
@@ -187,8 +187,14 @@ function ExpMapPrimePanel (props) {
     // Find area size in selectedArea
     let areaInKm2 = 0;
     try {
-      areaInKm2 = selectedArea.eez[0].properties.AREA_KM2;
+      areaInKm2 = selectedArea.area;
     } catch (e) {
+    }
+    if (areaInKm2 === 0) {
+      try {
+        areaInKm2 = selectedArea.eez[0].properties.AREA_KM2;
+      } catch (e) {
+      }
     }
     if (!areaInKm2) {
       areaInKm2 = calculateBoundingBoxArea(selectedArea.bounds);
@@ -201,7 +207,12 @@ function ExpMapPrimePanel (props) {
           return true;
         }
         if (total25Zones <= MAX_DISPLAYABLE_ZONES_OF_25KM2) {
-          return zoneType?.size === '5' || zoneType?.size === '25';
+          if (zoneType?.size === '5') {
+            return true;
+          }
+          if (zoneType?.size === '25') {
+            return areaInKm2 > 625;
+          }
         }
         if (total25Zones > MAX_DISPLAYABLE_ZONES_OF_25KM2) {
           return zoneType?.size === '25' || zoneType?.size === '50';
