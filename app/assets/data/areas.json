@@ -571,7 +571,7 @@
         "alpha2": "CI",
         "name": "Côte d'Ivoire",
         "type": "country",
-        "bounds": "25.237,-22.42,33.056,-15.609",
+        "bounds": "-18.061523,-1.680667,9.349365,12.897489",
         "available_resources": [
         "Solar PV",
         "Onshore Wind",
@@ -2527,7 +2527,7 @@
         "alpha2": "ST",
         "name": "São Tomé and Príncipe",
         "type": "country",
-        "bounds": "25.237,-22.42,33.056,-15.609",
+        "bounds": "5.847473,-0.118103,7.882690,1.900286",
         "available_resources": [
         "Solar PV",
         "Onshore Wind",
