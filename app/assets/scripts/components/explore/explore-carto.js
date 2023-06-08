@@ -26,7 +26,7 @@ function Carto (props) {
   const { setFocusZone, setHoveredFeature, hoveredFeature } = useContext(MapContext);
   const { selectedResource } = useContext(ExploreContext);
   const [prevSelectedResource,setPrevSelectedResource] = useState(selectedResource)
-  const[isHistogramVisible,setIsHistogramVisible] = useState(true);
+  const [isHistogramVisible,setIsHistogramVisible] = useState(true);
 
   useEffect(()=>{
     setPrevSelectedResource(selectedResource)

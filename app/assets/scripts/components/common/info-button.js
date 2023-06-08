@@ -8,6 +8,9 @@ const StyledTooltip = styled(ReactTooltip)`
   /* Z index set to 1000 to go over shadow scroll bar
    * which has z-index 1000 */
   z-index: 1001;
+  &.tooltip {
+    z-index:9999
+  } 
 `;
 
 function InfoButton (props) {
@@ -25,7 +28,7 @@ function InfoButton (props) {
         {props.children}
       </Button>
       {info &&
-        <StyledTooltip width={width} id={id} place='bottom' effect='solid'>
+        <StyledTooltip className='tooltip' width={width} id={id} place='bottom' effect='solid' >
           {info}
         </StyledTooltip>}
     </>
