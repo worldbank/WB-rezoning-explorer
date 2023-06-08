@@ -298,12 +298,12 @@ function QueryForm(props) {
   }, [resource]);
 
   const parseFileName = (fileName) => {
-    const parsedFileName = fileName.match(/^WBG-REZoning-([A-Z]{3})-(.*?)\s(.*?)-(.*?)-(.*)-(spatial-filters|economic-parameters|zone-weights).*\.csv$/);
+    const parsedFileName = fileName.match(/^WBG-REZoning-([A-Z]{3})-(.*?)\s(.*?)-(.*?)-(spatial-filters|economic-parameters|zone-weights).*\.csv$/);
     if (!parsedFileName) return null;
     return {
       countryCode: parsedFileName[1],
       resource: parsedFileName[2] + ' ' + parsedFileName[3],
-      zoneType: parsedFileName[4] + '-' + parsedFileName[5]
+      zoneType: parsedFileName[4]
     };
   };
 
