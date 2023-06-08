@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import T from 'prop-types';
 import styled from 'styled-components';
 import Histogram from '../common/histogram';
 import { themeVal } from '../../styles/utils/general';
 import MbMap from '../common/mb-map/mb-map';
 import MapContext from '../../context/map-context';
+import ExploreContext from '../../context/explore-context';
 // import ExploreContext from '../../context/explore-context';
 
 const ExploreCarto = styled.section`
@@ -23,6 +24,20 @@ function Carto (props) {
     zoneData
   } = props;
   const { setFocusZone, setHoveredFeature, hoveredFeature } = useContext(MapContext);
+  const { selectedResource } = useContext(ExploreContext);
+  const [prevSelectedResource,setPrevSelectedResource] = useState(selectedResource)
+  const[isHistogramVisible,setIsHistogramVisible] = useState(true);
+
+  useEffect(()=>{
+    setPrevSelectedResource(selectedResource)
+    if(selectedResource != prevSelectedResource){
+      setIsHistogramVisible(false)
+    }
+    else{
+      setIsHistogramVisible(true)
+    }
+  },[selectedResource])
+
   /*
    * Disable filtering temporarily
   const {
@@ -36,7 +51,7 @@ function Carto (props) {
       <MbMap
         triggerResize={triggerResize}
       />
-      { zoneData && (
+      { zoneData && isHistogramVisible && (
         <Histogram
           yProp='lcoe'
           xProp={['generation_potential', 'lcoe']}
