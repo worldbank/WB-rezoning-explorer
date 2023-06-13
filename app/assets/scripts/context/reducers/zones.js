@@ -278,9 +278,9 @@ export async function fetchZones (
     );
 
     const data = validZones.map((z, index) => {
-      if (!get(z, 'properties.summary.zone_score')) return z;
+      if (get(z, 'properties.summary.zone_score') === undefined || get(z, 'properties.summary.zone_score') === null) return z;
 
-      const zoneScore = z.properties.summary.zone_score / maxScore;
+      const zoneScore = z.properties.summary.zone_score > 0 ? (z.properties.summary.zone_score / maxScore) : z.properties.summary.zone_score;
       const color = zoneScoreColor(zoneScore);
       return {
         ...z,
