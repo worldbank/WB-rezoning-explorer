@@ -215,6 +215,9 @@ function ExpMapPrimePanel (props) {
         if (selectedResource !== RESOURCES.OFFSHORE && zoneType?.size === '0') {
           return true;
         }
+        if (selectedResource === RESOURCES.OFFSHORE) {
+          return zoneType?.size !== '5';
+        }
         if (total25Zones <= MAX_DISPLAYABLE_ZONES_OF_25KM2) {
           if (zoneType?.size === '5') {
             return true;
