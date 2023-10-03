@@ -87,7 +87,7 @@ function SliderGroup (props) {
       />
 
       {
-        hasInput && !disabled &&
+        hasInput &&
       <StressedFormGroupInput
         inputType='number'
         inputSize='small'
@@ -105,7 +105,7 @@ function SliderGroup (props) {
       {
       // Force render of disabled input field for locked inputs
       // FIXME: Remove, and fix disabled in line 89 above
-        hasLock && disabled &&
+        hasLock &&
       <StressedFormGroupInput
         inputType='number'
         inputSize='small'

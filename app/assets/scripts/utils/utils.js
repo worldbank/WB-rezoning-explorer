@@ -155,3 +155,13 @@ export const bisectByDate = (data, date, accessor = toDateAccessor) => {
 */
 
 export const randomRange = (min, max) => Math.random() * (max - min) + min;
+
+/**
+ * Returns a Promise that resolves after the specified delay.
+ *
+ * @param {number} delay - The time, in milliseconds, to wait before resolving the Promise.
+ * @return {Promise} A Promise that resolves after the specified delay.
+ */
+export const timeout = (delay) => {
+  return new Promise((resolve, reject) => setTimeout(resolve, delay));
+};

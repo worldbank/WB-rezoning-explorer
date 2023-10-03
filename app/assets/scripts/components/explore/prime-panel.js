@@ -6,28 +6,31 @@ import media, { isLargeViewport } from '../../styles/utils/media-queries';
 import ExploreContext from '../../context/explore-context';
 import MapContext from '../../context/map-context';
 import FormContext from '../../context/form-context';
-
+import area from '@turf/area';
+import bboxPolygon from '@turf/bbox-polygon';
 import ModalSelect from './modal-select';
 import { ModalHeadline } from '@devseed-ui/modal';
 import ModalSelectArea from './modal-select-area';
+import ModalSelectZoneType from './modal-select-zone-type';
 
 import Button from '../../styles/button/button';
 import InfoButton from '../common/info-button';
 
 import { Card } from '../common/card-list';
 
-import QueryForm, { EditButton } from './query-form';
+import QueryForm, { EditButton, ZoneTypeSizeSubheading } from './query-form';
 import RasterTray from './raster-tray';
-import { ZONES_BOUNDARIES_LAYER_ID } from '../common/mb-map/mb-map';
 import Heading, { Subheading } from '../../styles/type/heading';
 import { PanelBlock, PanelBlockBody, PanelBlockHeader } from '../common/panel-block';
 import { HeadOption, HeadOptionHeadline } from '../../styles/form/form';
 import Prose from '../../styles/type/prose';
-import GridSetter from './grid-setter';
-import { INPUT_CONSTANTS } from './panel-data';
 import { themeVal } from '../../styles/utils/general';
-
-const { GRID_OPTIONS } = INPUT_CONSTANTS;
+import {
+  RESOURCES,
+  BOUNDARIES,
+  zoneTypesList,
+  MAX_DISPLAYABLE_ZONES_OF_25KM2
+} from './panel-data';
 
 const PrimePanel = styled(Panel)`
   ${media.largeUp`
@@ -55,6 +58,11 @@ const RasterTrayWrapper = styled.div`
   > .raster-tray {
     grid-column: 1 /span 2;
     ${({ show }) => !show && 'display: none;'}
+  }
+
+  > .submit-issue-tray {
+    grid-column: 1 /span 2;
+    ${({ show }) => !show && 'display: none;'}
 
   }
 `;
@@ -78,23 +86,39 @@ function ExpMapPrimePanel (props) {
    */
   const {
     areas,
-    setSelectedAreaId,
     availableResources,
     selectedResource,
-    selectedArea,
     setSelectedResource,
+
+    selectedArea,
+    setSelectedAreaId,
+
+    availableZoneTypes,
+    setAvailableZoneTypes,
+    selectedZoneType,
+    setSelectedZoneType,
+
     tourStep,
     setTourStep,
-    gridMode,
-    setGridMode,
-    gridSize, setGridSize,
-    updateFilteredLayer
+    updateFilteredLayer,
+    currentZones,
+    importingData,
+    setImportingData,
+
+    csvFilterData,
+    setCsvFilterData,
+
+    activePanel,
+    setActivePanel
   } = useContext(ExploreContext);
+
   const {
     showSelectAreaModal,
     setShowSelectAreaModal,
     showSelectResourceModal,
     setShowSelectResourceModal,
+    showSelectZoneTypeModal,
+    setShowSelectZoneTypeModal,
     setZonesGenerated,
     setInputTouched,
     filtersLists,
@@ -109,7 +133,116 @@ function ExpMapPrimePanel (props) {
   } = useContext(MapContext);
 
   const [showRasterPanel, setShowRasterPanel] = useState(false);
+  const [showSubmitIssuePanel, setShowSubmitIssuePanel] = useState(false);
+  const [prevSelectedResource,setPrevSelectedResource] = useState(selectedResource)
 
+  function calculateBoundingBoxArea(boundingBox) {
+    // Create a polygon representing the bounding box
+    const boundingBoxPolygon = bboxPolygon(boundingBox);
+
+    // Calculate the area using turf.area
+    const areaSize = area(boundingBoxPolygon);
+
+    // Convert square meters to square kilometers
+    return areaSize / 1e6;
+  }
+
+  const onAreaEdit = () => {
+    if (importingData) return;
+    setShowSelectAreaModal(true);
+    setShowSelectResourceModal(false);
+    setShowSelectZoneTypeModal(false);
+  };
+  const onResourceEdit = () => {
+    if (importingData) return;
+    setShowSelectAreaModal(false);
+    setShowSelectResourceModal(true);
+    setShowSelectZoneTypeModal(false);
+  };
+  const onZoneTypeEdit = () => {
+    if (importingData) return;
+    setShowSelectAreaModal(false);
+    setShowSelectResourceModal(false);
+    setShowSelectZoneTypeModal(true);
+  };
+
+  React.useEffect(() => {
+    setPrevSelectedResource(selectedResource)
+    if (!(Object.keys(currentZones?.data).length === 0)) {
+      setShowRasterPanel(true);
+      setMapLayers(mapLayers.map(layer => {
+        if (layer.category === 'output') {
+          layer.disabled = false;
+          if (layer.visible) {
+            map.setLayoutProperty(layer.id, 'visibility', 'visible');
+            layer.visible = true;
+          }
+        }
+        return layer;
+      })
+      );
+    }
+    else {
+      setShowRasterPanel(false);
+    }
+    if (selectedResource != prevSelectedResource ){
+      setShowRasterPanel(false);
+    }
+  }, [currentZones?.data,selectedResource]);
+
+  React.useEffect(() => {
+    if (!selectedArea || !selectedResource) return;
+
+    // Find area size in selectedArea
+    let areaInKm2 = 0;
+    try {
+      areaInKm2 = selectedArea.area;
+    } catch (e) {
+    }
+    if (areaInKm2 === 0) {
+      try {
+        areaInKm2 = selectedArea.eez[0].properties.AREA_KM2;
+      } catch (e) {
+      }
+    }
+    if (!areaInKm2) {
+      areaInKm2 = calculateBoundingBoxArea(selectedArea.bounds);
+    }
+    const total25Zones = parseInt(areaInKm2 / 25);
+    let targetZoneType = null;
+    const availableZones = zoneTypesList.filter(
+      (zoneType) => {
+        if (selectedResource !== RESOURCES.OFFSHORE && zoneType?.size === '0') {
+          return true;
+        }
+        if (selectedResource === RESOURCES.OFFSHORE) {
+          return zoneType?.size !== '5' && zoneType?.size !== '0';
+        }
+        if (total25Zones <= MAX_DISPLAYABLE_ZONES_OF_25KM2) {
+          if (zoneType?.size === '5') {
+            return true;
+          }
+          if (zoneType?.size === '25') {
+            return areaInKm2 > 625;
+          }
+        }
+        if (total25Zones > MAX_DISPLAYABLE_ZONES_OF_25KM2) {
+          return zoneType?.size === '25' || zoneType?.size === '50';
+        }
+        return false;
+      }
+    );
+    if ((selectedResource === RESOURCES.OFFSHORE && selectedZoneType?.size === '0')) {
+      targetZoneType = availableZones.filter(zone => zone.size !== '0')[0];
+    }
+    if (!availableZones.find(_zone => _zone?.size === selectedZoneType?.size)) {
+      targetZoneType = [];
+    }
+    setAvailableZoneTypes(availableZones);
+    if (targetZoneType) {
+      setSelectedZoneType(targetZoneType);
+    }
+  }, [selectedResource, selectedArea]);
   return (
     <>
       <PrimePanel
@@ -128,7 +261,7 @@ function ExpMapPrimePanel (props) {
             <span>Open Tour</span>
           </Button>,
 
-          <RasterTrayWrapper key='toggle-raster-tray' show={showRasterPanel}>
+          <RasterTrayWrapper key='toggle-raster-tray' id='toggle-raster-tray' show={showRasterPanel}>
             <InfoButton
               id='toggle-raster-tray'
               className='info-button'
@@ -148,37 +281,22 @@ function ExpMapPrimePanel (props) {
             <RasterTray
               show={showRasterPanel}
               className='raster-tray'
-              layers={mapLayers}
+              layers={filtersLists ? mapLayers.filter(layer => !filtersLists.map(filter => filter.layer).includes(layer.id)) : mapLayers}
               resource={selectedResource}
-              onLayerKnobChange={(layer, knob) => {
-                // Check if changes are applied to zones layer, which
-                // have conditional paint properties due to filters
-                if (layer.id === ZONES_BOUNDARIES_LAYER_ID) {
-                  const paintProperty = map.getPaintProperty(
-                    layer.id,
-                    'fill-opacity'
-                  );
-
-                  // Zone boundaries layer uses a feature-state conditional
-                  // to detect hovering.
-                  // Here set the 3rd element of the array, which is the
-                  // non-hovered state value
-                  // to be the value of the knob
-                  paintProperty[3] = knob / 100;
-                  map.setPaintProperty(layer.id, 'fill-opacity', paintProperty);
-                } else {
-                  map.setPaintProperty(
-                    layer.id,
-                    layer.type === 'vector' ? 'fill-opacity' : 'raster-opacity',
-                    knob / 100
-                  );
-                }
-              }}
               onVisibilityToggle={(layer, visible) => {
                 if (visible) {
+                  // Show layer
                   if (layer.type === 'raster' && !layer.nonexclusive) {
+                    const visibilityTimeStamps = mapLayers.map(l => (l?.visibilityTimeStamp ? l.visibilityTimeStamp : 0));
+                    let highestTimeStamp = Math.max(...visibilityTimeStamps);
+
                     const ml = mapLayers.map((l) => {
                       if (l.type === 'raster' && !l.nonexclusive) {
+                        if (l.visible && (l.id !== layer.id)) {
+                          // Add time stamp to indicate this layer was hidden last
+                          l.visibilityTimeStamp = highestTimeStamp + 1;
+                          highestTimeStamp++;
+                        }
                         map.setLayoutProperty(
                           l.id,
                           'visibility',
@@ -202,16 +320,36 @@ function ExpMapPrimePanel (props) {
                     ]);
                   }
                 } else {
+                  // Hide layer
                   map.setLayoutProperty(layer.id, 'visibility', 'none');
                   const ind = mapLayers.findIndex((l) => l.id === layer.id);
-                  setMapLayers([
+                  const ml = [
                     ...mapLayers.slice(0, ind),
                     {
                       ...layer,
                       visible: false
                     },
                     ...mapLayers.slice(ind + 1)
-                  ]);
+                  ];
+
+                  // If the layer is an exclusive raster layer, we find the layer that was hidden last and then show it
+                  if (layer.type === 'raster' && !layer.nonexclusive) {
+                    const visibilityTimeStamps = ml.map(l => l?.visibilityTimeStamp ? l.visibilityTimeStamp : 0);
+                    let highestTimeStamp = Math.max(...visibilityTimeStamps);
+
+                    while (highestTimeStamp > 0) {
+                      const ind = ml.findIndex((l) => l.visibilityTimeStamp === highestTimeStamp);
+                      if (ind !== -1 && !ml[ind].visible) {
+                        ml[ind].visible = true;
+                        ml[ind].visibilityTimeStamp = 0;
+                        map.setLayoutProperty(ml[ind].id, 'visibility', 'visible');
+                        break;
+                      } else {
+                        highestTimeStamp--;
+                      }
+                    }
+                  }
+                  setMapLayers(ml);
                 }
               }}
             />
@@ -221,7 +359,7 @@ function ExpMapPrimePanel (props) {
         onPanelChange={onPanelChange}
         initialState={isLargeViewport()}
         bodyContent={
-          filtersLists && weightsList && lcoeList ? (
+          filtersLists && weightsList && lcoeList && filterRanges ? (
             <QueryForm
               firstLoad={firstLoad}
               area={selectedArea}
@@ -231,18 +369,26 @@ function ExpMapPrimePanel (props) {
               updateFilteredLayer={updateFilteredLayer}
               weightsList={weightsList}
               lcoeList={lcoeList}
-              gridMode={gridMode}
-              setGridMode={setGridMode}
-              gridSize={gridSize}
-              setGridSize={setGridSize}
-              onAreaEdit={() => setShowSelectAreaModal(true)}
-              onResourceEdit={() => setShowSelectResourceModal(true)}
+              selectedZoneType={selectedZoneType}
+              onAreaEdit={onAreaEdit}
+              onResourceEdit={onResourceEdit}
+              onZoneTypeEdit={onZoneTypeEdit}
               onInputTouched={(status) => {
                 setInputTouched(true);
               }}
               onSelectionChange={() => {
                 setZonesGenerated(false);
               }}
+              setSelectedAreaId={setSelectedAreaId}
+              setSelectedResource={setSelectedResource}
+              setSelectedZoneType={setSelectedZoneType}
+              importingData={importingData}
+              setImportingData={setImportingData}
+              csvFilterData={csvFilterData}
+              setCsvFilterData={setCsvFilterData}
+
+              activePanel={activePanel}
+              setActivePanel={setActivePanel}
             />
           ) : (
             <PanelBlock>
@@ -250,11 +396,11 @@ function ExpMapPrimePanel (props) {
                 <HeadOption>
                   <HeadOptionHeadline id='selected-area-prime-panel-heading'>
                     <Heading size='large' variation='primary'>
-                      {filterRanges && selectedArea ? selectedArea.name : 'Select Area'}
+                      {selectedArea ? selectedArea.name : 'Select Area'}
                     </Heading>
                     <EditButton
                       id='select-area-button'
-                      onClick={() => setShowSelectAreaModal(true)}
+                      onClick={onAreaEdit}
                       title='Edit Area'
                     >
                       Edit Area Selection
@@ -272,7 +418,7 @@ function ExpMapPrimePanel (props) {
                     </Subheading>
                     <EditButton
                       id='select-resource-button'
-                      onClick={() => setShowSelectResourceModal(true)}
+                      onClick={onResourceEdit}
                       title='Edit Resource'
                     >
                       Edit Resource Selection
@@ -284,44 +430,58 @@ function ExpMapPrimePanel (props) {
                   <HeadOptionHeadline>
                     <Subheading>Zone Type and Size: </Subheading>
                     <Subheading variation='primary'>
-                      <Subheadingstrong>
-                        {gridMode ? `${gridSize} km²` : 'Boundaries'}
-                      </Subheadingstrong>
+                      <ZoneTypeSizeSubheading>
+                        { selectedZoneType ? selectedZoneType.size > 0 ? `${selectedZoneType.size} km` : 'Boundaries' : 'Select Zone Type And Size'}
+                      </ZoneTypeSizeSubheading>
                     </Subheading>
-
-                    <GridSetter
-                      gridOptions={GRID_OPTIONS}
-                      gridSize={gridSize}
-                      setGridSize={setGridSize}
-                      gridMode={gridMode}
-                      setGridMode={setGridMode}
-                      disableBoundaries={selectedResource === 'Off-Shore Wind'}
-                    />
+                    <EditButton
+                      id='select-zone-type-button'
+                      onClick={onZoneTypeEdit}
+                      title='Edit Zone Type'
+                    >
+                      Edit Zone Type Selection
+                    </EditButton>
                   </HeadOptionHeadline>
                 </HeadOption>
               </PanelBlockHeader>
               <PanelBlockBody>
-                {filterRanges && selectedArea && selectedResource ? (
+                {selectedArea && selectedResource && selectedZoneType ? (
                   <PreAnalysisMessage> Loading parameters... </PreAnalysisMessage>
                 ) : (
-                  <PreAnalysisMessage>
-                    Select Area and Resource to view and interact with input
-                    parameters.
-                  </PreAnalysisMessage>
+                  filterRanges
+                    ? (
+                      <PreAnalysisMessage>
+                        Select Area, Resource, and Zone Type to view and interact with input
+                        parameters.
+                      </PreAnalysisMessage>
+                    )
+                    : (
+                      <PreAnalysisMessage>
+                          The filters are not available for the selected area. Please choose a different area.
+                      </PreAnalysisMessage>
+                    )
                 )}
               </PanelBlockBody>
             </PanelBlock>
           )
         }
       />
+
+      <ModalSelectArea
+        revealed={showSelectAreaModal && !importingData}
+        areas={areas}
+        closeButton={typeof selectedArea !== 'undefined'}
+        selectedResource={selectedResource}
+        showSelectAreaModal={showSelectAreaModal}
+        showSelectZoneTypeModal={showSelectZoneTypeModal}
+        setShowSelectAreaModal={setShowSelectAreaModal}
+        setSelectedAreaId={setSelectedAreaId}
+      />
+
       <ModalSelect
-        revealed={showSelectResourceModal && !showSelectAreaModal}
-        onOverlayClick={() => {
-          setShowSelectResourceModal(false);
-        }}
-        onCloseClick={() => {
-          setShowSelectResourceModal(false);
-        }}
+        revealed={!showSelectAreaModal && showSelectResourceModal && !importingData}
+        onOverlayClick={() => setShowSelectResourceModal(false)}
+        onCloseClick={() => setShowSelectResourceModal(false)}
         data={availableResources}
         closeButton={typeof selectedResource !== 'undefined'}
         renderHeadline={() => (
@@ -350,13 +510,12 @@ function ExpMapPrimePanel (props) {
         nonScrolling
       />
 
-      <ModalSelectArea
-        areas={areas}
-        closeButton={typeof selectedArea !== 'undefined'}
-        selectedResource={selectedResource}
-        showSelectAreaModal={showSelectAreaModal}
-        setShowSelectAreaModal={setShowSelectAreaModal}
-        setSelectedAreaId={setSelectedAreaId}
+      <ModalSelectZoneType
+        revealed={!showSelectAreaModal && !showSelectResourceModal && showSelectZoneTypeModal && !importingData}
+        availableZoneTypes={availableZoneTypes}
+        selectedZoneType={selectedZoneType}
+        setSelectedZoneType={setSelectedZoneType}
+        setShowSelectZoneTypeModal={setShowSelectZoneTypeModal}
       />
     </>
   );

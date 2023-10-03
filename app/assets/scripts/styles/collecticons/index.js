@@ -13,13 +13,14 @@ export const collecticonsFont = () => css`
 
 /**
  * Includes a collecticons icon by name.
+ * If name is a unicode icon it will be displayed
  * @param {string} name Icon name
  */
 export default function collecticon (name) {
-  name = `${catalog.className}-${name}`;
-  const icon = catalog.icons.find(i => i.icon === name);
-  const content = icon ? `\\${icon.charCode}` : 'n/a';
-
+  const catalog_name = `${catalog.className}-${name}`;
+  const icon = catalog.icons.find(i => i.icon === catalog_name);
+  let content = icon ? `\\${icon.charCode}` : name;
+  
   return css`
     speak: none;
     font-family: "${catalog.name}";

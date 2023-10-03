@@ -34,8 +34,8 @@ const HeadlineTabs = styled.div`
 
 function ModalSelectArea (props) {
   const {
+    revealed,
     areas,
-    showSelectAreaModal,
     setShowSelectAreaModal,
     setSelectedAreaId,
     closeButton
@@ -44,12 +44,17 @@ function ModalSelectArea (props) {
   const [areaType, setAreaType] = useState('country');
   const [searchValue, setSearchValue] = useState('');
 
+  const simplifyText = (text) => {
+    // Remove accents from characters
+    return text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
   return (
     <ModalSelect
-      revealed={showSelectAreaModal}
-      onOverlayClick={() => {
-        setShowSelectAreaModal(false);
-      }}
+      revealed={revealed}
+      onOverlayClick={() => setShowSelectAreaModal(false)}
       onCloseClick={() => setShowSelectAreaModal(false)}
       closeButton={closeButton}
       data={areas.filter((a) => a.type === areaType)}
@@ -75,7 +80,7 @@ function ModalSelectArea (props) {
         </HeadlineWrapper>
       )}
       filterCard={(card) =>
-        card.name.toLowerCase().includes(searchValue.toLowerCase())}
+        simplifyText(card.name).toLowerCase().includes(searchValue.toLowerCase())}
       renderCard={(area) => (
         <Card
           id={`area-${area.id}-card`}
@@ -99,7 +104,6 @@ function ModalSelectArea (props) {
 
 ModalSelectArea.propTypes = {
   areas: T.array,
-  showSelectAreaModal: T.bool,
   setShowSelectAreaModal: T.func,
   setSelectedAreaId: T.func,
   closeButton: T.bool

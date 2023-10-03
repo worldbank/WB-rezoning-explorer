@@ -3,7 +3,8 @@ import config from '../../config';
 import { wrapLogReducer } from './../contexeed';
 import {
   allowedTypes,
-  INPUT_CONSTANTS
+  INPUT_CONSTANTS,
+  RESOURCES
 } from '../../components/explore/panel-data';
 
 const abbreviateUnit = (unit, id) => {
@@ -27,7 +28,7 @@ export const filtersReducer = wrapLogReducer(makeAPIReducer('FETCH_FILTERS'));
  * Request filter schema from api
  * dispatch updates to some context using 'dispatch' function
 */
-export async function fetchFilters (dispatch) {
+export async function fetchFilters (selectedResource, dispatch) {
   dispatch({ type: 'REQUEST_FETCH_FILTERS' });
   try {
     const { body: filters } = await fetchJSON(
@@ -68,7 +69,8 @@ export async function fetchFilters (dispatch) {
             range: INPUT_CONSTANTS.DEFAULT_RANGE,
             type: allowedTypes.get(filter.type === 'string' ? filter.pattern : filter.type),
             ...opts
-          }
+          },
+          visible: selectedResource === RESOURCES.SOLAR ? filter.id === 'f_gsa_pvout' : filter.id === 'f_gwa_speed_100'
         };
       });
     dispatch({ type: 'RECEIVE_FETCH_FILTERS', data: apiFilters });

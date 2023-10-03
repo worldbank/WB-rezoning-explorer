@@ -55,12 +55,15 @@ export function GlobalProvider (props) {
 
     const displaySuccess = () => {
       toasts.info(
-        `${download.prettyOperation} raw data export for ${download.selectedArea.name} has completed, click here to start download.`,
-        {
-          onClick: () => {
+        <>
+        <span
+          onClick={() => {
             window.open(downloadUrl, 'blank');
-          }
-        }
+          }}
+        >
+          {`${download.prettyOperation} raw data export for ${download.selectedArea.name} has completed, click here to start download.`}
+        </span>
+      </>,
       );
       cleanup();
     };

@@ -109,7 +109,7 @@ const LegendFoldTrigger = styled(AccordionFoldTrigger)`
   }
 `;
 
-function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones }) {
+function RasterLegendItem({ mapLayers, filterRanges, filtersLists }) {
   const visibleRaster = mapLayers.filter(
     (layer) =>
       layer.type === 'raster' &&
@@ -124,13 +124,13 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones 
 
   let rasterRange;
 
-  if (filterRanges.getData()[visibleRaster[0].id]) {
-    rasterRange = filterRanges.getData()[visibleRaster[0].id];
+  if (filterRanges[visibleRaster[0].id]) {
+    rasterRange = filterRanges[visibleRaster[0].id];
   } else if (visibleRaster[0].id === LCOE_LAYER_LAYER_ID) {
     // CurrentZones will be defined at this point
     // LCOE layer can only be made visible after zones are generated
     try {
-      rasterRange = filterRanges.getData().lcoe;
+      rasterRange = filterRanges.lcoe;
     } catch {
       // Current zones has been invalidated
       // Visibility of lcoe layer not updated in this render cycle
@@ -257,9 +257,9 @@ function RasterLegendItem({ mapLayers, filterRanges, filtersLists, currentZones 
         </LegendLinear>
         {rasterRange && (
           <>
-            <InputLabel>{rasterRange.min.toFixed(1) || 0}</InputLabel>
+            <InputLabel>{rasterRange.min?.toFixed(1) || 0}</InputLabel>
             <InputLabel align='right'>
-              {rasterRange.max.toFixed(1) || 1}
+              {rasterRange.max?.toFixed(1) || 1}
             </InputLabel>
           </>
         )}
@@ -300,7 +300,7 @@ FilteredAreaLegendItem.propTypes = {
   mapLayers: T.array
 };
 
-function ZoneScoreLegendItem({ mapLayers, wide }) {
+function ZoneScoreLegendItem({ mapLayers, wide, minLabel, maxLabel }) {
   const zoneScoreVisible = mapLayers.filter(
     (layer) =>
       layer.id === ZONES_BOUNDARIES_LAYER_ID &&
@@ -330,15 +330,17 @@ function ZoneScoreLegendItem({ mapLayers, wide }) {
           </LegendLabelsStyled>
         )}
       </LegendLinear>
-      <InputLabel>0</InputLabel>
-      <InputLabel align='right'>1</InputLabel>
+      <InputLabel>{minLabel}</InputLabel>
+      <InputLabel align='right'>{maxLabel}</InputLabel>
     </LegendItemWrapper>
   );
 }
 
 ZoneScoreLegendItem.propTypes = {
   mapLayers: T.array,
-  wide: T.bool
+  wide: T.bool,
+  minLabel: T.oneOfType([T.number, T.string]),
+  maxLabel: T.oneOfType([T.number, T.string])
 };
 
 export default function MapLegend({
@@ -347,12 +349,14 @@ export default function MapLegend({
   filtersLists,
   filterRanges,
   currentZones
-
 }) {
   const [showMapLegend, setShowMapLegend] = useState(true);
   const landCoverVisible =
     mapLayers.filter(({ id, visible }) => id === 'land-cover' && visible)
       .length > 0;
+  const minZoneScore = 0;
+  const maxZoneScore = 1;
+
   return (
     <MapLegendSelf wide={landCoverVisible} id='map-legend' isExpanded={showMapLegend}>
       <LegendFoldTrigger
@@ -399,8 +403,9 @@ export default function MapLegend({
         filterRanges={filterRanges}
         filtersLists={filtersLists}
         currentZones={currentZones}
+        selectedResource={selectedResource}
       />
-      <ZoneScoreLegendItem mapLayers={mapLayers} wide={landCoverVisible} />
+      <ZoneScoreLegendItem mapLayers={mapLayers} wide={landCoverVisible} minLabel={minZoneScore} maxLabel={maxZoneScore} />
     </MapLegendSelf>
   );
 }

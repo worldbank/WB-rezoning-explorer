@@ -74,7 +74,7 @@ async function initStyles () {
     });
 }
 
-function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
+function drawHeader (doc, selectedArea, selectedResource, selectedZoneType) {
   // Title
   doc
     .fillColor(options.baseFontColor)
@@ -93,7 +93,7 @@ function drawHeader (doc, selectedArea, selectedResource, gridMode, gridSize) {
     .font(boldFont)
     .text('ZONE TYPE AND SIZE:  ', options.margin * 1.5, (options.margin / 2) + 18, { continued: true })
     .font(baseFont)
-    .text(gridMode ? `Grid: ${gridSize}km²` : 'Administrative Boundaries');
+    .text(selectedZoneType.size > 0 ? `Grid: ${selectedZoneType.size}km` : 'Administrative Boundaries');
 
   // Logos
   doc.image(
@@ -211,7 +211,7 @@ function drawFooter(doc) {
   );
 }
 
-export default async function exportCountryMap(selectedArea, selectedResource, gridMode, gridSize, map, setMap) {
+export default async function exportCountryMap(selectedArea, selectedResource, selectedZoneType, map, setMap) {
   // Zoom to country bounds
   showGlobalLoadingMessage('Generating Map Export...');
 
@@ -232,7 +232,7 @@ export default async function exportCountryMap(selectedArea, selectedResource, g
   const stream = doc.pipe(blobStream());
 
   // Add Sections
-  drawHeader(doc, selectedArea, selectedResource, gridMode, gridSize);
+  drawHeader(doc, selectedArea, selectedResource, selectedZoneType);
   drawMap(doc);
   drawFooter(doc);
 

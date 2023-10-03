@@ -159,13 +159,13 @@ const FormInput = ({ option, onChange, isWeight, isLocked, onLockChange }) => {
       );
     case DROPDOWN:
       return (
-        <FormGroup>
+        <FormGroup>          
           <FormSelect
             id={option.name}
             onChange={(e) => {
               onChange(e.target.value);
             }}
-            value={option.input.value}
+            value={value?.id}
           >
             {option.input.availableOptions.map(({ name, id }) => {
               return (

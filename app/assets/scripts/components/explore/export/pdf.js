@@ -293,7 +293,7 @@ function drawFooter (doc, pageNumber) {
  */
 function drawMapArea (
   doc,
-  { selectedResource, zones, gridMode, gridSize },
+  { selectedResource, zones, selectedZoneType },
   mapDataURL, mapAspectRatio
 ) {
   // Create page area for map
@@ -357,7 +357,7 @@ function drawMapArea (
       return [label, value];
     })
   };
-  summaryTable.cells.unshift(['Zone Type and Size', gridMode ? `Grid: ${gridSize}km²` : 'Administrative Boundaries']);
+  summaryTable.cells.unshift(['Zone Type and Size', selectedZoneType.size > 0 ? `Grid: ${selectedZoneType.size}km²` : 'Administrative Boundaries']);
   summaryTable.cells.unshift(['Resource', selectedResource]);
   doc.table(summaryTable, legendRight, doc.y + 12, { width: (options.colWidthTwoCol) });
   doc.y += get(options, 'tables.padding', 0);

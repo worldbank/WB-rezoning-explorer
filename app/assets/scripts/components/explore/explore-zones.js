@@ -99,6 +99,7 @@ const CardDetails = styled.ul`
   text-align: center;
   text-transform: uppercase;
 `;
+
 const Detail = styled.dl`
   dt,
   dd {
@@ -149,6 +150,35 @@ const ZoneColumnHead = styled(Subheading)`
     }}
 `;
 
+
+const ErrorMessageDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+
+const ErrorIconContainer = styled.div`
+  background: ${({ color }) => `${color}`};
+  width: 8rem;
+  height: 8rem;
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 1rem;
+`;
+
+const ErrorCardDetails = styled.ul`
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: ${({ hasZoneScore }) => hasZoneScore ? '1fr 1fr' : '1fr'};
+  font-size: 0.875rem;
+  text-align: center;
+`;
+
+
 const columns = [{ id: 'lcoe', name: 'LCOE' }, { id: 'zone_score', name: 'SCORE' }];
 
 function ExploreZones (props) {
@@ -166,9 +196,12 @@ function ExploreZones (props) {
 
   const [sortId, setSortId] = useState('lcoe');
 
+  const minZoneScore = 0;
+  const maxZoneScore = 1;
+
   return (
     <ZonesWrapper active={active}>
-      <ColorScale steps={10} heading='Weighted Zone Score' min={0} max={1} colorFunction={zoneScoreColor} />
+      <ColorScale steps={10} heading='Weighted Zone Score' minLabel={minZoneScore} maxLabel={maxZoneScore} colorFunction={zoneScoreColor} />
       {focusZone ? (
         <ZonesHeader>
           <Button onClick={() => setFocusZone(null)} size='small' useIcon={['chevron-left--small', 'before']}>
@@ -214,9 +247,23 @@ function ExploreZones (props) {
               [focusZone.id]: !selectedZones[focusZone.id]
             })}
         />
-      ) : (
+      ) : 
+      ( currentZones.length == 0 ?
+        <ErrorMessageDiv>
+          <ErrorIconContainer color='white'>
+            <img
+              alt='Warning'
+              src='/assets/graphics/meta/warning-signs-svgrepo-com.svg'
+            />
+          </ErrorIconContainer>
+          <ErrorCardDetails>
+            Unfortunately, your analysis did not yield results. If this does not look correct, please double check the filter range but also the data layers you have activated, which might actually not have data for your country of interest.
+          </ErrorCardDetails>
+        </ErrorMessageDiv>
+        :
         <>
           <CardList
+            minHeight={true}
             numColumns={1}
             data={
               currentZones.sort((a, b) => {
@@ -269,7 +316,6 @@ function ExploreZones (props) {
                         )
                       : 'Zone unavailable'}
                   </CardDetails>
-
                 </Card>
               );
             }}

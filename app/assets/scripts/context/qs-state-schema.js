@@ -1,4 +1,4 @@
-import { round } from '../utils/format';
+import {round, roundDown} from '../utils/format';
 import get from 'lodash.get';
 import inRange from 'lodash.inrange';
 import intersection from 'lodash.intersection';
@@ -59,12 +59,15 @@ export const initByType = (obj, ranges, resource) => {
   const apiRange = ranges[obj.layer];
   const { input, options } = obj;
 
-  const range = setRangeByUnit(
-    (apiRange && [round(apiRange.min), round(apiRange.max)]) ||
+  let range = setRangeByUnit(
+    (apiRange && [roundDown(apiRange.min), round(apiRange.max)]) ||
       obj.input.range ||
       DEFAULT_RANGE,
     obj.unit
-  ).map((v) => round(v));
+  );
+  if (range.length > 1) {
+    range = [roundDown(range[0]), round(range[1])];
+  }
 
   switch (input.type) {
     case SLIDER:

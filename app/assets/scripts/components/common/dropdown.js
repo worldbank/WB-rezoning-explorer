@@ -398,6 +398,10 @@ const DropContent = styled.div`
     &.drop-trans-exit-active {
       ${transitions.up.start}
     }
+      
+    &.feedback {
+      background: #21a8f4;
+    }
   }
 
   .tether-target-attached-bottom.tether-element-attached-top & {
@@ -409,7 +413,7 @@ const DropContent = styled.div`
     &.drop-trans-appear-active,
     &.drop-trans-enter-active {
       ${transitions.down.end}
-    }
+    }  
 
     &.drop-trans-exit {
       ${transitions.down.end}

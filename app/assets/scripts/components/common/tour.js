@@ -9,6 +9,14 @@ import { themeVal } from '../../styles/utils/general';
 
 const steps = [
   {
+    title: 'Info Box',
+    target: '#info-box',
+    content: 'Cick here to view about page of the Rezoning App.',
+    disableBeacon: true,
+    placement: 'right',
+    spotlightClicks: true
+  },
+  {
     title: 'Apply Spatial Filters',
     target: '#filters-tab',
     content: 'First, set filters to exclude undesired areas. Spatial filters allow you to specify lower and upper thresholds for natural, infrastructure, environmental, and cultural areas. Certain areas can be masked out completely by toggling the respective filter switch off.',
@@ -43,7 +51,31 @@ const steps = [
   {
     title: 'Contextual Layers',
     target: '#toggle-raster-tray',
-    content: 'Toggle contextual layers to visualize relevant spatial data and resulting output on the map. Additional contextual layers, such as roads, grid, location of airports, etc. can be activated in order to create a meaningful visual output.',
+    content: 'Toggle contextual layers to visualize the resulting output on the map and additional relevant spatial data',
+    disableBeacon: true,
+    placement: 'right',
+    spotlightClicks: true
+  },
+  {
+    title: 'Export Tour',
+    target: '#export-tour-target',
+    content: 'Click here to download the input parameters and associated thresholds in CSV format',
+    disableBeacon: true,
+    placement: 'bottom',
+    spotlightClicks: true
+  },
+  {
+    title: 'Import Tour',
+    target: '#import-tour-target',
+    content: 'You can import previously saved input parameters in CSV format',
+    disableBeacon: true,
+    placement: 'bottom',
+    spotlightClicks: true
+  },
+  {
+    title: 'Feedback Tour',
+    target: '#toggle-feedback-tray',
+    content: 'Click here to send us your feedback',
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
@@ -55,7 +87,7 @@ const steps = [
     disableBeacon: true,
     placement: 'right',
     spotlightClicks: true
-  }
+  },
 ];
 
 const Inner = styled.div`
@@ -149,6 +181,7 @@ TourTooltip.propTypes = {
 
 function Tour (props) {
   const { tourStep, setTourStep, ready } = props;
+
   return (
     <>
       <Joyride

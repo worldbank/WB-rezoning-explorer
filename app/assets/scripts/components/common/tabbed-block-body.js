@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Children } from 'react';
+import React, {useState, useEffect, Children, forwardRef} from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 import { PanelBlockScroll, PanelBlockHeader } from './panel-block';
@@ -116,15 +116,14 @@ const ContentInner = styled.div`
 `;
 
 function TabbedBlock (props) {
-  const { children } = props;
+  const { children, setActivePanel, activePanel } = props;
   const childArray = Children.toArray(children);
-  const [activeTab, setActiveTab] = useState(0);
-  const [activeContent, setActiveContent] = useState(childArray[activeTab]);
+  const [activeContent, setActiveContent] = useState(childArray[activePanel]);
   const [presetValue, setPresetValue] = useState(childArray.map(_ => 'Select'));
 
   useEffect(() => {
-    setActiveContent(childArray[activeTab]);
-  }, [activeTab]);
+    setActiveContent(childArray[activePanel]);
+  }, [activePanel]);
 
   return (
     <>
@@ -138,14 +137,14 @@ function TabbedBlock (props) {
                   <Tab
                     as='a'
                     id={`${name.toLowerCase()}-tab`}
-                    active={ind === activeTab}
+                    active={ind === activePanel}
                     useIcon={icon}
                     title='Show menu'
                     size='small'
                     disabled={disabled}
                     onClick={(e) => {
                       e.preventDefault();
-                      setActiveTab(ind);
+                      setActivePanel(ind);
                     }}
                   >
                     {name}
@@ -161,7 +160,7 @@ function TabbedBlock (props) {
 
           {
             Children.map(children, (child, i) => {
-              const active = i === activeTab;
+              const active = i === activePanel;
               return (
                 <>
                   {activeContent.props.presets &&

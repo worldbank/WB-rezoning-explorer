@@ -9,6 +9,7 @@ export default {
   mbToken:
     'pk.eyJ1Ijoid2JnLWNkcnAiLCJhIjoiY2l1Z3pxZDVwMDBxcDMzcDJjYmRpYnBicSJ9.hjlLP5TEVhqbTwzhFA1rZw',
   apiEndpoint: 'https://d2b8erzy6y494p.cloudfront.net/v1',
+  githubIssuesApi: 'https://d2b8erzy6y494p.cloudfront.net/v1/feedback',
   rawDataDownloadTimeout: 300000, // 5 min
   rawDataDownloadCheckInterval: 2000, // 2 sec
   indicatorsDecimals: {

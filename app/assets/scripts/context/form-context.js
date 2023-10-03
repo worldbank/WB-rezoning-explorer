@@ -10,18 +10,24 @@ import {
   hideGlobalLoading
 } from '../components/common/global-loading';
 import { apiResourceNameMap } from '../components/explore/panel-data';
+import { RESOURCES } from '../components/explore/panel-data';
 
 const FormContext = createContext({});
+
 export function FormProvider (props) {
-  const { selectedAreaId, selectedResource, currentZones } = useContext(ExploreContext);
+  const { selectedAreaId, selectedResource, selectedZoneType, currentZones } = useContext(ExploreContext);
   const [inputTouched, setInputTouched] = useState(true);
   const [zonesGenerated, setZonesGenerated] = useState(false);
+  const [importedFilters, setImportedFilters] = useState(null);
 
   const [showSelectAreaModal, setShowSelectAreaModal] = useState(
     !selectedAreaId
   );
   const [showSelectResourceModal, setShowSelectResourceModal] = useState(
     !selectedResource
+  );
+  const [showSelectZoneTypeModal, setShowSelectZoneTypeModal] = useState(
+    !selectedZoneType
   );
 
   const [filtersList, dispatchFiltersList] = useReducer(
@@ -50,17 +56,18 @@ export function FormProvider (props) {
   useEffect(() => {
     setShowSelectAreaModal(!selectedAreaId);
     setShowSelectResourceModal(!selectedResource);
+    setShowSelectZoneTypeModal(!selectedZoneType);
 
-    if (selectedResource) {
+    if (selectedAreaId && selectedResource && selectedZoneType) {
       // only fetch filters once, after we have resources
       if (!ff) {
-        fetchFilters(dispatchFiltersList);
+        fetchFilters(selectedResource, dispatchFiltersList);
         ff = true;
       }
 
       fetchFilterRanges(selectedAreaId, selectedResource, dispatchFilterRanges);
     }
-  }, [selectedAreaId, selectedResource]);
+  }, [selectedAreaId, selectedResource, selectedZoneType]);
 
   useEffect(() => {
     fetchWeights(dispatchWeightsList);
@@ -77,25 +84,25 @@ export function FormProvider (props) {
       setInputTouched(false);
     }
   }, [currentZones]);
-
   return (
     <>
       <FormContext.Provider
         value={
           {
+            filtersListReducerRes: filtersList,
             filtersLists: filtersList.isReady() ? filtersList.getData() : null,
             weightsList: weightsList.isReady() ? weightsList.getData() : null,
             lcoeList: lcoeList.isReady() ? lcoeList.getData() : null,
-            filterRanges,
+            filterRanges: filterRanges.isReady() ? filterRanges.getData() : null,
             inputTouched,
             setInputTouched,
             zonesGenerated,
             setZonesGenerated,
             showSelectAreaModal,
             setShowSelectAreaModal,
-            showSelectResourceModal,
-            setShowSelectResourceModal
-
+            showSelectResourceModal, setShowSelectResourceModal,
+            showSelectZoneTypeModal, setShowSelectZoneTypeModal,
+            importedFilters, setImportedFilters
           }
         }
       >

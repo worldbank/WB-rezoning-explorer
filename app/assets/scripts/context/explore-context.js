@@ -9,7 +9,10 @@ import useQsState from '../utils/qs-state-hook';
 import config from '../config';
 import areasJson from '../../data/areas.json';
 import { initialApiRequestState } from './contexeed';
-import { fetchZonesReducer, fetchZones } from './reducers/zones';
+import {
+  fetchZonesReducer,
+  fetchZones,
+} from './reducers/zones';
 
 import {
   showGlobalLoadingMessage,
@@ -22,6 +25,7 @@ import {
   checkIncluded,
   getMultiplierByUnit,
   resourceList,
+  zoneTypesList,
   apiResourceNameMap
 } from '../components/explore/panel-data';
 
@@ -111,6 +115,7 @@ export function ExploreProvider (props) {
   // Area context
   const [areas, setAreas] = useState(areasList);
   const [selectedArea, setSelectedArea] = useState(null);
+  const [importingData, setImportingData] = useState(false);
   const [selectedAreaId, setSelectedAreaId] = useQsState({
     key: 'areaId',
     default: undefined,
@@ -125,6 +130,17 @@ export function ExploreProvider (props) {
     validator: (v) => availableResources.map((r) => r.name).includes(v)
   });
 
+  // Zone type context
+  const [availableZoneTypes, setAvailableZoneTypes] = useState(zoneTypesList);
+  const [selectedZoneType, setSelectedZoneType] = useQsState({
+    key: 'zoneId',
+    default: undefined,
+    validator: (v) => availableZoneTypes.map((r) => r.name).includes(v?.name)
+  });
+
+  const [csvFilterData, setCsvFilterData] = useState(null);
+  const [activePanel, setActivePanel] = useState(0);
+
   // Helper function to update resource list for the selected area.
   // Instead of using "selectedArea" from state, the area must be passed as a param
   // to avoid life cycle errors.
@@ -137,6 +153,9 @@ export function ExploreProvider (props) {
       // If no area is selected, return all resources
       if (!area) return true;
 
+      if ( !area.available_resources.includes( r.name ) )
+        return false;
+
       // If resource is not offshore, include it
       if (r.name !== RESOURCES.OFFSHORE) return true;
 
@@ -144,19 +163,19 @@ export function ExploreProvider (props) {
       return typeof area.eez !== 'undefined';
     });
 
-    if (!updatedList.find(r => r.name === selectedResource)) {
-      // This means offshore was selcted from previous area
-      // But is not available for this country
-      // default to wind
-      setSelectedResource(undefined);
+    if (!importingData) {
+      if (!updatedList.find(r => r.name === selectedResource)) {
+        // This means offshore was selcted from previous area
+        // But is not available for this country
+        // default to wind
+        setSelectedResource(undefined);
+      }
     }
+
     setAvailableResources(
       updatedList
     );
   }
-
-  const [gridMode, setGridMode] = useState(false);
-  const [gridSize, setGridSize] = useState(GRID_OPTIONS[0]);
 
   const [tourStep, setTourStep] = useState(0);
 
@@ -167,6 +186,8 @@ export function ExploreProvider (props) {
 
   const [filteredLayerUrl, setFilteredLayerUrl] = useState(null);
   const [outputLayerUrl, setOutputLayerUrl] = useState(null);
+
+  const [filterString, setFilterString] = useState( "" );
 
   // Executed on page mount
   useEffect(() => {
@@ -222,14 +243,15 @@ export function ExploreProvider (props) {
     setAreas(areasWithEez);
     const currentArea = areasWithEez.find((a) => a.id === selectedAreaId);
 
-    areasInitialized.current = true;
     updateAvailableResources(currentArea);
+    areasInitialized.current = true;
 
     hideGlobalLoading();
   };
 
   // Handle selected area id changes
   useEffect(() => {
+    if (!areasInitialized.current) return;
     // Clear current zones
     dispatchCurrentZones({ type: 'INVALIDATE_FETCH_ZONES' });
 
@@ -237,28 +259,37 @@ export function ExploreProvider (props) {
     const area = areas.find((a) => a.id === selectedAreaId);
     setSelectedArea(area);
     updateAvailableResources(area);
-  }, [selectedAreaId]);
+  }, [selectedAreaId, areasInitialized]);
 
   // Find selected area based on changes in id
   // Change options based on energy type
   useEffect(() => {
+    if (!areasInitialized.current) return;
     let nextArea = areas.find((a) => `${a.id}` === `${selectedAreaId}`);
 
     if (selectedResource === 'Off-Shore Wind' && nextArea) {
-      const initBounds = bboxPolygon(nextArea.bounds);
-      const eezs = nextArea.eez ? nextArea.eez : [];
-      const fc = featureCollection([initBounds, ...eezs]);
-      const newBounds = bbox(fc);
+      let newBounds = null;
+      try {
+        if (nextArea.offshore_bounds) {
+          newBounds = nextArea.offshore_bounds.split(',').map((x) => parseFloat(x));
+        }
+      } catch (e) {
+      }
+      if (!newBounds) {
+        const initBounds = bboxPolygon(nextArea.bounds);
+        const eezs = nextArea.eez ? nextArea.eez : [];
+        const fc = featureCollection([initBounds, ...eezs]);
+        newBounds = bbox(fc);
+      }
       nextArea = {
         ...nextArea,
         bounds: newBounds
       };
-      setGridMode(true);
     }
 
     setSelectedArea(nextArea);
     updateAvailableResources(nextArea);
-  }, [areas, selectedAreaId, selectedResource]);
+  }, [areas, selectedAreaId, selectedResource, areasInitialized]);
 
   useEffect(() => {
     localStorage.setItem('site-tour', tourStep);
@@ -267,9 +298,9 @@ export function ExploreProvider (props) {
   const generateZones = async (filterString, weights, lcoe) => {
     showGlobalLoadingMessage(`Generating zones for ${selectedArea.name}, this may take a few minutes...`);
     fetchZones(
-      gridMode && gridSize,
       selectedArea,
       selectedResource,
+      selectedZoneType,
       filterString,
       weights,
       lcoe,
@@ -277,7 +308,48 @@ export function ExploreProvider (props) {
     );
   };
 
-  const updateFilteredLayer = (filterValues, weights, lcoe) => {
+  const getLayerFilterString = (filter) => {
+    const { id, active, input, isRange } = filter;
+
+    // Bypass inactive filters
+    if (!maskTypes.includes(input.type) &&
+        (!active || !checkIncluded(filter, selectedResource))) {
+      // Skip filters that are NOT mask and are inactive
+      return null;
+    } else if (maskTypes.includes(input.type) && active) {
+      // If this is an 'active' mask filter, we don't need to send to the api. Active here means include these areas
+      return null;
+    } else if (isRange) {
+      if (input.value.min === input.range[0] &&
+        input.value.max === input.range[1]) {
+        return null;
+      }
+    }
+
+    // Add accepted filter types to the query
+    if (input.type === SLIDER) {
+      const {
+        value: { min, max }
+      } = filter.input;
+
+      // App uses km but api expects values in meters
+      const multiplier = getMultiplierByUnit(filter.unit);
+      return `${id}=${min * multiplier},${max * multiplier}`;
+    } else if (input.type === BOOL) {
+      return `${id}=${filter.input.value}`;
+    } else if (input.type === MULTI) {
+      return input.value.length === input.options.length ? null : `${id}=${input.value.join(',')}`;
+    } else if (input.type === DROPDOWN || input.type === MULTI) {
+      return `${id}=${filter.input.value.join(',')}`;
+    } else {
+    // discard non-accepted filter types
+      /* eslint-disable-next-line */
+      console.error(`Filter ${id} type not supported by api, discarding`);
+      return null;
+    }
+  }
+
+  const updateFilterString = (filterValues) => {
     // Prepare a query string to the API based from filter values
     //
     const filterString = filterValues
@@ -324,11 +396,19 @@ export function ExploreProvider (props) {
       .filter((x) => x)
       .join('&');
 
+    setFilterString(filterString);
+    return filterString;
+  };
+
+  const updateFilteredLayer = (filterValues, weights, lcoe) => {
+
+    const filterString = updateFilterString(filterValues);
+
     // If area of country type, prepare country path string to add to URL
-    const countryPath = selectedArea.type === 'country' ? `${selectedArea.id}/` : '';
+    const countryPath = `${selectedArea.id}/`;
 
     // if area of country type, prepare resource path string to add to URL
-    const resourcePath = selectedArea.type === 'country' ? `${apiResourceNameMap[selectedResource]}/` : '';
+    const resourcePath = `${apiResourceNameMap[selectedResource]}/`;
 
     // Off-shore mask flag
     const offshoreWindMask = selectedResource === RESOURCES.OFFSHORE ? '&offshore=true' : '';
@@ -389,19 +469,34 @@ export function ExploreProvider (props) {
           selectedArea,
           selectedAreaId,
           setSelectedAreaId,
+
           availableResources,
           selectedResource,
           setSelectedResource,
 
-          gridMode,
-          setGridMode,
-          gridSize,
-          setGridSize,
+          availableZoneTypes,
+          setAvailableZoneTypes,
+          selectedZoneType,
+          setSelectedZoneType,
+          importingData,
+          setImportingData,
 
           currentZones,
           generateZones,
 
+          filterString,
+          setFilterString,
+          updateFilterString,
+          getLayerFilterString,
+
+          csvFilterData,
+          setCsvFilterData,
+
+          activePanel,
+          setActivePanel,
+
           filteredLayerUrl,
+          setFilteredLayerUrl,
           updateFilteredLayer,
           outputLayerUrl,
           tourStep,

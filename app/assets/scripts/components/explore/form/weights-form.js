@@ -9,6 +9,7 @@ import {
 import FormIntro from './form-intro';
 import FormInput from '../form/form-input';
 import { distributedDivision, sumBy } from '../../../utils/math';
+import Button from '../../../styles/button/button';
 
 function updateWeight(weights, id, value) {
   const [w, setValue] = weights.find(([w]) => w.id === id);
@@ -22,7 +23,7 @@ function updateWeight(weights, id, value) {
 }
 
 function WeightsForm(props) {
-  const { weights, active, weightsLocks, setWeightLocks } = props;
+  const { weights, active, weightsLocks, setWeightLocks, selectedArea } = props;
 
   function onSliderChange(id, sliderVal) {
     let updatedValuesArray = weights.map(([w]) => {

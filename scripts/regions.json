@@ -3,6 +3,7 @@
     {
       "id": "western-and-central-africa",
       "name": "Western and Central Africa",
+      "available_resources": ["onshore_wind", "off_shore_wind", "solar_pv"],
       "territories": [
         "BEN",
         "BFA",
@@ -30,6 +31,7 @@
     {
       "id": "east-and-southern-africa",
       "name": "East and Southern Africa",
+      "available_resources": ["onshore_wind", "off_shore_wind", "solar_pv"],
       "territories": [
         "AGO",
         "BWA",
@@ -62,6 +64,7 @@
     {
       "id": "middle-east-and-north-africa",
       "name": "Middle East and North Africa",
+      "available_resources": ["onshore_wind", "off_shore_wind", "solar_pv"],
       "territories": [
         "DZA",
         "BHR",
@@ -88,6 +91,7 @@
     {
       "id": "caribbean",
       "name": "Caribbean",
+      "available_resources": ["onshore_wind", "off_shore_wind", "solar_pv"],
       "territories": [
         "ABW",
         "AIA",
@@ -126,11 +130,15 @@
     },
     {
       "id": "black-sea",
-      "name": "Black Sea"
+      "name": "Black Sea",
+      "available_resources": ["off_shore_wind"],
+      "territories": ["BGR", "GEO", "ROU", "RUS", "TUR", "UKR"]
     },
     {
       "id": "caspian-sea",
-      "name": "Caspian Sea"
+      "name": "Caspian Sea",
+      "available_resources": ["off_shore_wind"],
+      "territories": ["AZE", "IRN", "KAZ", "RUS", "TKM"]
     }
   ]
 }

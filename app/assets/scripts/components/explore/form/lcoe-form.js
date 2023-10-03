@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
 import T from 'prop-types';
+import styled from 'styled-components';
+
 import {
   FormWrapper,
   FormGroupWrapper,
@@ -13,9 +15,18 @@ import FormInput from '../form/form-input';
 import { Accordion, AccordionFold, AccordionFoldTrigger } from '../../../components/accordion';
 import Heading from '../../../styles/type/heading';
 import { makeTitleCase } from '../../../styles/utils/general';
+import Button from '../../../styles/button/button';
+
+import Dropdown from '../../common/dropdown';
+
+const DropdownWide = styled(Dropdown)`
+max-width: 600px;
+background: rgba(0,0,0,0.8);
+color: white;
+`;
 
 function LCOEForm (props) {
-  const { lcoe, active } = props;
+  const { lcoe, active, selectedArea,handleEconomicSortedData } = props;
 
   const categorizedCosts = Object.entries(lcoe.reduce((accum, cost) => {
     const [c] = cost;
@@ -63,26 +74,41 @@ function LCOEForm (props) {
                         })
 
                         .map(([cost, setCost], ind) => {
-                          const onChange = useCallback(
-                            (v) => setCost({
+                          const onChange = useCallback((v) => {
+                            const selectedObject = cost.input.type === 'dropdown' && cost.input.availableOptions.find(obj => obj.id === v);
+                            setCost({
                               ...cost,
                               input: {
                                 ...cost.input,
-                                value: v
-                              }
-                            })
-
-                          );
+                                value: selectedObject ? selectedObject : parseInt(v),
+                              },
+                            });
+                          });
+                          handleEconomicSortedData(cost)
                           return (
                             <PanelOption key={cost.name} hidden={!isFoldExpanded}>
                               <OptionHeadline>
                                 <PanelOptionTitle>{cost.name}</PanelOptionTitle>
                                 {cost.info &&
-                            <InfoButton info={cost.info} id={cost.name}>
-                              Info
-                            </InfoButton>}
-                              </OptionHeadline>
-
+                                  <DropdownWide
+                                    alignment='center'
+                                    direction='down'
+                                    triggerElement={
+                                      <Button
+                                        hideText
+                                        useIcon='circle-information'
+                                        className='info-button'
+                                      >
+                                        Info
+                                      </Button>
+                                    }
+                                  >
+                                    <div>
+                                      {cost.info}
+                                    </div>
+                                  </DropdownWide>
+                                }
+                                </OptionHeadline>
                               <FormInput
                                 option={cost}
                                 onChange={onChange}

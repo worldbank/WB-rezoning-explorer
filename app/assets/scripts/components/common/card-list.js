@@ -95,7 +95,7 @@ const CardListScroll = styled(ShadowScrollbar)`
   flex: 1;
 `;
 const CardListWrapper = styled(PanelBlockBody)`
-  height: 100%;
+height: ${({ minHeight }) => minHeight ? 'calc(15vw)' : '100%'};
   ${({ nonScrolling }) => nonScrolling && css`
     display: flex;
     flex-direction: column;
@@ -103,9 +103,9 @@ const CardListWrapper = styled(PanelBlockBody)`
   `}
 `;
 
-function CardList ({ data, renderCard, filterCard = () => true, numColumns, nonScrolling }) {
+function CardList ({ data, renderCard, filterCard = () => true, numColumns, nonScrolling,minHeight }) {
   return (
-    <CardListWrapper nonScrolling={nonScrolling}>
+    <CardListWrapper nonScrolling={nonScrolling} minHeight={minHeight}>
       {nonScrolling ? (
         <CardListContainer numColumns={numColumns} className='list-container'>
           {data.filter(filterCard).map(renderCard)}

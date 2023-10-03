@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import T from 'prop-types';
 import styled, { css } from 'styled-components';
 // import { Button } from '@devseed-ui/button';
@@ -10,6 +10,7 @@ import { headingAlt } from '../../styles/type/heading';
 import { panelSkin } from '../../styles/skins';
 import { glsp } from '../../styles/utils/theme-values';
 import media from '../../styles/utils/media-queries';
+import ExploreContext from '../../context/explore-context';
 
 const _tint = stylizeFunction(tint);
 
@@ -19,7 +20,7 @@ export const PanelSelf = styled.section`
   flex-flow: column nowrap;
   max-width: 0;
   width: 100vw;
-  height: 100%;
+  height: 100vh;
   z-index: 10;
   transition: all 0.16s ease 0s;
 
@@ -49,7 +50,7 @@ const PanelHeader = styled.header`
   transition: max-width 0.16s ease 0s, padding 0.16s ease 0s, opacity 0.16s ease 0s;
 
   ${({ revealed }) => revealed && css`
-    overflow: visible;
+    overflow: auto;
     max-width: 100vw;
     padding: ${glsp()};
     opacity: 1;
@@ -83,6 +84,7 @@ const PanelBody = styled.div`
     max-width: 100vw;
     opacity: 1;
     overflow: visible;
+    overflow-y: scroll !important;
   `}
 `;
 
@@ -124,92 +126,96 @@ const PanelControls = styled.div`
 
 `;
 
-class Panel extends React.Component {
-  constructor (props) {
-    super(props);
-    this.state = { revealed: props.initialState };
+function Panel(props) {
+  const [revealed, setRevealed] = useState(
+    props.direction === 'left' ? props.initialState : false
+  );
+  const {
+    headerContent,
+    renderHeader,
+    bodyContent,
+    collapsible,
+    direction,
+    className,
+    overrideControl,
+    additionalControls,
+    onPanelChange
+  } = props;
+  const { currentZones,selectedResource,tourStep } = useContext(ExploreContext);
+  const [prevSelectedResource,setPrevSelectedResource] = useState(selectedResource)
 
-    this.onCollapseClick = this.onCollapseClick.bind(this);
-  }
-
-  onCollapseClick () {
-    const { onPanelChange, overrideControl, revealed } = this.props;
+  const onCollapseClick=()=> {
     if (overrideControl) {
-      return onPanelChange({ revealed: !revealed });
+      return onPanelChange(setRevealed(!revealed));
     }
 
-    this.setState(
-      (state) => ({ revealed: !state.revealed }),
-      () => {
-        onPanelChange && onPanelChange({ revealed: this.state.revealed });
-      }
-    );
+    setRevealed(!revealed);
+    onPanelChange && onPanelChange(setRevealed(!revealed) );
   }
+ 
+  useEffect(()=>{
+    setPrevSelectedResource(selectedResource)
+    if(!(Object.keys(currentZones?.data).length === 0)){
+      setRevealed(true)
+    }
+    else if(props.direction === 'right'){
+      setRevealed(false)
+    }
+    if(selectedResource != prevSelectedResource && props.direction === 'right'){
+      setRevealed(false)
+    }  
+  },[currentZones?.data, selectedResource])
 
-  render () {
-    const {
-      headerContent,
-      renderHeader,
-      bodyContent,
-      collapsible,
-      direction,
-      className,
-      overrideControl,
-      additionalControls
-    } = this.props;
-    const revealed = overrideControl
-      ? this.props.revealed
-      : this.state.revealed;
 
-    const icon =
-      direction === 'left'
-        ? revealed
-          ? 'shrink-to-left'
-          : 'expand-from-left'
-        : revealed
-          ? 'shrink-to-right'
-          : 'expand-from-right';
+  const icon =
+    direction === 'left'
+      ? revealed
+        ? 'shrink-to-left'
+        : 'expand-from-left'
+      : revealed
+        ? 'shrink-to-right'
+        : 'expand-from-right';
 
-    const header = typeof renderHeader === 'function'
-      ? renderHeader({ revealed })
-      : headerContent ? (
-        <PanelHeader revealed={revealed}>
-          {headerContent}
-        </PanelHeader>
-      ) : null;
+  const header = typeof renderHeader === 'function'
+    ? renderHeader({ revealed })
+    : headerContent ? (
+      <PanelHeader revealed={revealed}>
+        {headerContent}
+      </PanelHeader>
+    ) : null;
 
-    return (
-      <PanelSelf revealed={revealed} className={className}>
-        {header}
-        <PanelBody revealed={revealed}>{bodyContent}</PanelBody>
+  return (
+    <PanelSelf revealed={revealed} className={className}>
+      {header}
+      <PanelBody revealed={revealed}>{bodyContent}</PanelBody>
 
-        <PanelControls revealed={revealed} direction={direction}>
-          {collapsible && (
-            <PanelOffsetActions>
-              <Button
-                variation='base-plain'
-                useIcon={icon}
-                title='Show/hide prime panel'
-                hideText
-                onClick={this.onCollapseClick}
-              >
-                <span>Prime panel</span>
-              </Button>
+      <PanelControls revealed={revealed} direction={direction}>
+        {collapsible && (
+          <PanelOffsetActions>
+            <Button
+              variation='base-plain'
+              useIcon={icon}
+              title='Show/hide prime panel'
+              hideText
+              onClick={onCollapseClick}
+            >
+              <span>Prime panel</span>
+            </Button>
+          </PanelOffsetActions>
+        )}
+        {
+          additionalControls && additionalControls.map(ctrl => (
+            <PanelOffsetActions key={`${ctrl.props.id}-wrapper`}>
+              {ctrl}
             </PanelOffsetActions>
-          )}
-          {
-            additionalControls && additionalControls.map(ctrl => (
-              <PanelOffsetActions key={`${ctrl.props.id}-wrapper`}>
-                {ctrl}
-              </PanelOffsetActions>
-            ))
-          }
-        </PanelControls>
+          ))
+        }
+      </PanelControls>
 
-      </PanelSelf>
-    );
-  }
+    </PanelSelf>
+  );
 }
+
 
 Panel.propTypes = {
   initialState: T.bool,

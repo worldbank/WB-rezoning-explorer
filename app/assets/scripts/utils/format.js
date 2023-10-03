@@ -10,6 +10,10 @@ export function round (value, decimals = 2) {
   return Math.round(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
 
+export function roundDown (value, decimals = 2) {
+  return Math.floor(value * Math.pow(10, decimals)) / Math.pow(10, decimals);
+}
+
 export function truncateDecimals (number, digits = 2) {
   const multiplier = Math.pow(10, digits);
   const adjustedNum = number * multiplier;
