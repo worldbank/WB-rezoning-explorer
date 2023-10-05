@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect } from 'react';
 import T from 'prop-types';
 import config from '../config';
 import toasts from '../components/common/toasts';
-import { show } from 'surge/lib/middleware/util/helpers';
 const {
   apiEndpoint,
   rawDataDownloadTimeout,
