@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import T from 'prop-types';
 import config from '../config';
 import toasts from '../components/common/toasts';
+import { show } from 'surge/lib/middleware/util/helpers';
 const {
   apiEndpoint,
   rawDataDownloadTimeout,
@@ -26,8 +27,23 @@ export function GlobalProvider (props) {
   // keeps metadata of active download.
   const [download, setDownload] = useState(null);
 
+  // Show app status
+  const showWelcomeBanner = () => {
+    toasts.info(
+      <span
+        onClick={() => {
+          window.open('https://rezoning.energydata.info/', 'blank');
+        }}
+      >
+        Welcome to REZoning 1.1, launched in October 2023.
+      </span>
+    );
+  };
+
   // Monitor download request by watching download object
   useEffect(() => {
+    showWelcomeBanner();
+
     let clientDownloadId;
     let downloadUrl;
     if (download) {
