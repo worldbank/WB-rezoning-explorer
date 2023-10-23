@@ -237,7 +237,35 @@ function About () {
                   </video>
                 </li>
               </ul>
-
+              <h3>Release Notes</h3>
+              <p>This section lists the features that were added or amended by Kartoza (Pty) Ltd on REZoning 1.2. 
+                  The sections are discussed in greater detail in the user guide.</p>
+              <ol>
+                <li>
+                  <strong>Feedback Tool (new feature):</strong> Allows users to provide feedback, 
+                  report bugs and make feature requests for the REZoning tool that is compiled on the REZoning Git Hub page.
+                </li>
+                <li>
+                  <strong>Select a 5 km grid zone (new feature):</strong> 5 km solution for countries smaller than 625 km<sup>2</sup> that 
+                    cannot support the 25 and 50 km grid zones.
+                </li>
+                <li>
+                  <strong>Grid zone (amended feature):</strong> Grid zone labels accurately reflect the length and width of zones at 25 km (625 km<sup>2</sup>) 
+                      and 50 km (2500 km<sup>2</sup>) respectively.
+                </li>
+                <li>
+                  <strong>Import and Export Filters (new feature):</strong> Feature to export and import information on countries, resources, filters,
+                        grid size, economic and weight filters to recreate outputs.
+                </li>
+                <li>
+                  <strong>Contextual layers (amended feature):</strong> Many contextual layers are now available and interactive through the spatial 
+                          filters tab to improve the specificity of calculations. 
+                </li>   
+                <li>
+                  <strong>Filter toggle (new feature):</strong> Filter toggle allows the user to see and select the desired range of values for input. 
+                            Data sources are now available through information button links adjacent to the layer. 
+                </li> 
+              </ol>
               <h3>Additional Relevant Tools</h3>
               <p>Other applications and data sources that are relevant for the energy sector.</p>
               <Dl horizontal>

@@ -26,8 +26,23 @@ export function GlobalProvider (props) {
   // keeps metadata of active download.
   const [download, setDownload] = useState(null);
 
+  // Show app status
+  const showWelcomeBanner = () => {
+    toasts.info(
+      <span
+        onClick={() => {
+          window.open('https://rezoning.energydata.info/', 'blank');
+        }}
+      >
+        Welcome to REZoning 1.2, launched in October 2023.
+      </span>
+    );
+  };
+
   // Monitor download request by watching download object
   useEffect(() => {
+    showWelcomeBanner();
+
     let clientDownloadId;
     let downloadUrl;
     if (download) {
