@@ -34,7 +34,7 @@ export function GlobalProvider (props) {
           window.open('https://rezoning.energydata.info/', 'blank');
         }}
       >
-        Welcome to REZoning 1.1, launched in October 2023.
+        Welcome to REZoning 1.2, launched in October 2023.
       </span>
     );
   };
