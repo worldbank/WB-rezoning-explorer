@@ -127,13 +127,6 @@ function About () {
                 makers to obtain insights into the technical and economic
                 potential of renewable energy resources for all countries*.
               </p>
-              <p className='small'>* Version v.1 does not contain the following
-                countries: United States, Russia, Kiribati, Fiji, Cook Islands,
-                Marshall Islands, Niue, United States Minor Outlying Islands,
-                Wallis and Fortuna.
-                We expect to incorporate these into the next revision of the
-                REZoning tool.
-              </p>
               <p>
                 The REZoning tool is powered by global geospatial datasets and
                 uses baseline industry assumptions as default values for economic
