@@ -238,12 +238,17 @@ function About () {
                 </li>
               </ul>
               <h3>Release Notes</h3>
-              <p>This section lists the features that were added or amended by Kartoza (Pty) Ltd on REZoning 1.2. 
+              <h4>REZoning 1.2 (Oct 16, 2023)</h4>
+              <p>REZoning 1.2 addressed feedback on the user experience with the tool. This release was developed by Kartoza (Pty) Ltd. 
                   The sections are discussed in greater detail in the user guide.</p>
               <ol>
                 <li>
                   <strong>Feedback Tool (new feature):</strong> Allows users to provide feedback, 
                   report bugs and make feature requests for the REZoning tool that is compiled on the REZoning Git Hub page.
+                </li>
+                <li>
+                  <strong>Import and Export Filters (new feature):</strong> Feature to export and import information on countries, resources, filters,
+                        grid size, economic and weight filters to recreate outputs.
                 </li>
                 <li>
                   <strong>Select a 5 km grid zone (new feature):</strong> 5 km solution for countries smaller than 625 km<sup>2</sup> that 
@@ -254,10 +259,6 @@ function About () {
                       and 50 km (2500 km<sup>2</sup>) respectively.
                 </li>
                 <li>
-                  <strong>Import and Export Filters (new feature):</strong> Feature to export and import information on countries, resources, filters,
-                        grid size, economic and weight filters to recreate outputs.
-                </li>
-                <li>
                   <strong>Contextual layers (amended feature):</strong> Many contextual layers are now available and interactive through the spatial 
                           filters tab to improve the specificity of calculations. 
                 </li>   
@@ -265,6 +266,30 @@ function About () {
                   <strong>Filter toggle (new feature):</strong> Filter toggle allows the user to see and select the desired range of values for input. 
                             Data sources are now available through information button links adjacent to the layer. 
                 </li> 
+              </ol>
+              <h4>REZoning 1.1 (May 14, 2021)</h4>
+              <p>REZoning 1.1 addressed post release bug fixes including.</p>
+              <ol>
+                <li>Layer names and interpretations</li>
+                <li>API URL changes to add resource parameters</li>
+                <li>LCOE changes for performance.</li>
+              </ol>
+              <h4>REZoning 1.0 (May 10, 2021)</h4>
+              <p>REZoning 1.0 was the first release. Features include:</p>
+              <ol>
+                <li>Interactive, web-based platform to identify, visualize, and rank zones using LCOE
+                      that are most suitable for the development of RE projects.
+                </li>
+                <li><strong>Custom spatial filters:</strong>
+                  (Solar PVOut​, Elevation​, Slope​, Population Density​, Distance from Transmission Lines, Include/exclude Water Bodies​, Land Cover, Distance to Roads/Airports​, Include/exclude Protected Areas , Distance to UNESCO World Heritage Sites)</li>
+                <li>
+                <strong>Custom economic parameters:</strong>
+                  (Solar Unit Type​, Installed Capacity Area Factor, Generation – capital, Generation – fixed O&M, Economic discount rate, Technical Loss Factor​, Unavailability Factor​, Generation – variable O&M, Transmission – capital​, Transmission – fixed O&M​, Substation – capital​, Road – capital​, Road – fixed O&M, Decommission rate, Lifetime)
+                </li>
+                <li>
+                <strong>Zone weights</strong>
+                  LCOE Generation​, Distance to Grid​, Population Density​, Slope​, Distance to Airports, Distance to Ports​, Distance to Roads
+                </li>
               </ol>
               <h3>Additional Relevant Tools</h3>
               <p>Other applications and data sources that are relevant for the energy sector.</p>
