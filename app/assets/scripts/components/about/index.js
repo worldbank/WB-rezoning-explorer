@@ -125,7 +125,7 @@ function About () {
                 brings together spatial analysis and economic calculations into an
                 online, user-friendly environment that allows users and decision
                 makers to obtain insights into the technical and economic
-                potential of renewable energy resources for all countries*.
+                potential of renewable energy resources for all countries.
               </p>
               <p>
                 The REZoning tool is powered by global geospatial datasets and
