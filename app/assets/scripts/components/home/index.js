@@ -151,7 +151,7 @@ function Home () {
             <p>Inspired by <a href='https://mapre.lbl.gov/'>MapRE</a></p>
             <PartnerLogos>
               <img src='./assets/graphics/content/logos/logo-esmap--white.png' />
-              <img src='./assets/graphics/content/logos/logo-wb--white.png' />
+              <img src='./assets/graphics/content/logos/logo-wb-GOST.png' />
               <img src='./assets/graphics/content/logos/logo-ucsb--white.png' />
               <img src='./assets/graphics/content/logos/kartoza-white-logo.png' />
               <img src='./assets/graphics/content/logos/logo-ds.png' />
