@@ -154,6 +154,7 @@ function Home () {
               <img src='./assets/graphics/content/logos/logo-wb--white.png' />
               <img src='./assets/graphics/content/logos/logo-ucsb--white.png' />
               <img src='./assets/graphics/content/logos/kartoza-white-logo.png' />
+              <img src='./assets/graphics/content/logos/logo-ds.png' />
             </PartnerLogos>
           </InpageBodyInner>
         </InpageBody>
