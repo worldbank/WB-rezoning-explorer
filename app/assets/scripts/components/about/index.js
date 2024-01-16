@@ -372,7 +372,7 @@ function About () {
                 >
                   <img
                     alt='Kartoza Logo'
-                    src='/assets/graphics/content/logos/kartoza-white-logo.png'
+                    src='/assets/graphics/content/logos/kartoza-dark-logo.png'
                   />
                   <span>Kartoza</span>
                 </a>
