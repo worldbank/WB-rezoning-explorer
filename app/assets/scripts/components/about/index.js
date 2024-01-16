@@ -362,6 +362,21 @@ function About () {
                   <span>Development Seed</span>
                 </a>
               </dd>
+              <dd>
+                <a
+                  href='https://kartoza.com/'
+                  title='Visit Kartoza'
+                  className='logo-ds'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  <img
+                    alt='Kartoza Logo'
+                    src='/assets/graphics/content/logos/kartoza-white-logo.png'
+                  />
+                  <span>Kartoza</span>
+                </a>
+              </dd>
             </LogoList>
           </AboutPageBodyInner>
         </InpageBody>
