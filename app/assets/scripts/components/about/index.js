@@ -143,7 +143,7 @@ function About () {
                   here
                 </a>{' '}. See the
                 {' '}
-                <a href='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning_user_guide.pdf'>
+                <a href='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning_user_guide_1_2.pdf'>
                        Rezoning User Guide
                 </a>{' '}
                 for a detailed description of the tool and
