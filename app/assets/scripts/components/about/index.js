@@ -138,12 +138,12 @@ function About () {
                 endorsement or acceptance of such boundaries. The
                 source code is available {' '}
                 <a
-                  href='https://github.com/developmentseed/rezoning-explorer'
+                  href='https://github.com/worldbank/WB-rezoning-explorer'
                 >
                   here
                 </a>{' '}. See the
                 {' '}
-                <a href='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning_user_guide.pdf'>
+                <a href='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning_user_guide_1_2.pdf'>
                        Rezoning User Guide
                 </a>{' '}
                 for a detailed description of the tool and
@@ -227,6 +227,12 @@ function About () {
                   <strong>Solar PV:</strong>
                   <video controls width='100%'>
                     <source src='https://gre-website-public.s3.us-east-2.amazonaws.com/solarpv_v2.mkv' type='video/mp4' />
+                  </video>
+                </li>
+                <li>
+                  <strong>Upgrades in the 1.2 Release:</strong>
+                  <video controls width='100%'>
+                    <source src='https://gre-website-public.s3.us-east-2.amazonaws.com/rezoning1_2.m4v' type='video/mp4' />
                   </video>
                 </li>
               </ul>
@@ -354,6 +360,21 @@ function About () {
                     src='/assets/graphics/content/logos/logo-ds.png'
                   />
                   <span>Development Seed</span>
+                </a>
+              </dd>
+              <dd>
+                <a
+                  href='https://kartoza.com/'
+                  title='Visit Kartoza'
+                  className='logo-ds'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  <img
+                    alt='Kartoza Logo'
+                    src='/assets/graphics/content/logos/kartoza-dark-logo.png'
+                  />
+                  <span>Kartoza</span>
                 </a>
               </dd>
             </LogoList>
