@@ -15,7 +15,7 @@ export async function fetchInputLayers (dispatch) {
   dispatch({ type: 'REQUEST_LAYERS' });
   try {
     const layers = (
-      await fetchJSON(`${apiEndpoint}/layers`)
+      await fetchJSON(`${apiEndpoint}/layers/`)
     ).body;
 
     const layerList = Object.keys(layers).map(id => ({
